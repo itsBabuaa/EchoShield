@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Home - EchoShield{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">EchoShield</h1>
+        <p class="hero-subtitle">Protect yourself from AI-generated voice fraud with advanced neural network technology</p>
+        <a href="/detect" class="btn-primary btn-large">
+            Detect Deepfake Audio
+        </a>
+    </div>
+    <div class="hero-animation">
+        <div class="sound-wave"></div>
+        <div class="sound-wave"></div>
+        <div class="sound-wave"></div>
+    </div>
+</section>
+
+<!-- What is Deepfake Section -->
+<section class="info-section">
+    <div class="container">
+        <h2 class="section-title">What are Deepfakes?</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icon">🎭</div>
+                <h3>Synthetic Media</h3>
+                <p>Deepfakes are AI-generated audio or video content that convincingly mimics real people's voices, faces, and mannerisms using deep learning algorithms.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">🤖</div>
+                <h3>AI Technology</h3>
+                <p>Created using neural networks trained on hours of real audio/video data, deepfakes can replicate anyone's voice with startling accuracy.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">⚠️</div>
+                <h3>Growing Threat</h3>
+                <p>As technology advances, deepfakes are becoming harder to detect, making verification tools essential for digital security.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Deepfake Audio Section -->
+<section class="audio-section">
+    <div class="container">
+        <h2 class="section-title">Deepfake Audio: The Invisible Threat</h2>
+        <div class="content-split">
+            <div class="content-text">
+                <h3>How It Works</h3>
+                <p>Deepfake audio uses voice cloning technology to create synthetic speech that sounds identical to a real person. With just a few minutes of audio samples, AI can generate convincing fake recordings.</p>
+                
+                <h3>Common Uses</h3>
+                <ul class="feature-list">
+                    <li>Voice phishing (vishing) scams</li>
+                    <li>Impersonation fraud</li>
+                    <li>Fake news and misinformation</li>
+                    <li>Corporate espionage</li>
+                    <li>Political manipulation</li>
+                </ul>
+            </div>
+            <div class="content-visual">
+                <div class="stat-box">
+                    <div class="stat-number">BiLSTM</div>
+                    <div class="stat-label">Neural Network</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">13K+</div>
+                    <div class="stat-label">Training Samples</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">&lt;5s</div>
+                    <div class="stat-label">Detection Time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Harm Section -->
+<section class="harm-section">
+    <div class="container">
+        <h2 class="section-title">The Real-World Impact</h2>
+        <div class="harm-grid">
+            <div class="harm-card">
+                <div class="harm-icon">💰</div>
+                <h3>Financial Fraud</h3>
+                <p>Criminals use deepfake audio to impersonate executives, requesting fraudulent wire transfers. In 2023, a UK company lost $243,000 to a deepfake voice scam.</p>
+            </div>
+            <div class="harm-card">
+                <div class="harm-icon">🗳️</div>
+                <h3>Political Manipulation</h3>
+                <p>Fake audio of politicians can spread misinformation, influence elections, and damage reputations before verification is possible.</p>
+            </div>
+            <div class="harm-card">
+                <div class="harm-icon">👤</div>
+                <h3>Identity Theft</h3>
+                <p>Voice authentication systems can be bypassed, leading to unauthorized access to bank accounts, medical records, and personal data.</p>
+            </div>
+            <div class="harm-card">
+                <div class="harm-icon">📰</div>
+                <h3>Misinformation</h3>
+                <p>Fake audio clips can go viral on social media, spreading false information and eroding trust in legitimate media sources.</p>
+            </div>
+            <div class="harm-card">
+                <div class="harm-icon">👨‍👩‍👧</div>
+                <h3>Family Scams</h3>
+                <p>Scammers clone voices of family members to create fake emergency calls, tricking relatives into sending money for fabricated crises.</p>
+            </div>
+            <div class="harm-card">
+                <div class="harm-icon">🏢</div>
+                <h3>Corporate Espionage</h3>
+                <p>Deepfake audio is used to impersonate executives in confidential calls, extracting sensitive business information and trade secrets.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Protect Yourself Today</h2>
+        <p>Use our advanced AI-powered detection tool to verify audio authenticity</p>
+        <div class="cta-buttons">
+            <a href="/detect" class="btn-primary btn-large">Start Detection</a>
+            <a href="/learn-more" class="btn-secondary btn-large">Learn More</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

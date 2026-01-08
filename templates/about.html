@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - EchoShield{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <h1 class="page-title">About Our Team</h1>
+    <p class="about-intro">We are a dedicated team of researchers, engineers, and designers committed to combating deepfake audio fraud through advanced AI technology.</p>
+    
+    <div class="team-grid">
+        {% for member in team_members %}
+        <div class="team-card">
+            <div class="team-photo">
+                <img src="{{ url_for('static', filename='images/' + member.photo) }}" 
+                     alt="{{ member.name }}" 
+                     onerror="this.src='{{ url_for('static', filename='images/default-avatar.svg') }}'">
+            </div>
+            <div class="team-info">
+                <h3 class="team-name">{{ member.name }}</h3>
+                <div class="team-role">{{ member.role }}</div>
+                <p class="team-contribution">{{ member.contribution }}</p>
+                <div class="team-contact">
+                    <a href="mailto:{{ member.email }}" class="team-email">
+                        <span>📧</span> {{ member.email }}
+                    </a>
+                    {% if member.github %}
+                    <a href="https://github.com/{{ member.github }}" target="_blank" class="team-github">
+                        <span>🔗</span> github.com/{{ member.github }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <h2>Our Mission</h2>
+        <p>To provide accessible, accurate, and reliable deepfake detection technology that protects individuals, organizations, and society from the harmful effects of synthetic media manipulation.</p>
+        
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">🎯</div>
+                <h3>Accuracy</h3>
+                <p>We strive for the highest detection accuracy through continuous research and model improvement.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🔓</div>
+                <h3>Accessibility</h3>
+                <p>Our tool is free and easy to use, making deepfake detection available to everyone.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🔬</div>
+                <h3>Innovation</h3>
+                <p>We leverage cutting-edge AI research to stay ahead of evolving deepfake technology.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🤝</div>
+                <h3>Transparency</h3>
+                <p>We believe in open communication about our methods, limitations, and results.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Technology Section -->
+    <section class="tech-section">
+        <h2>Our Technology</h2>
+        <div class="tech-stats">
+            <div class="stat-item">
+                <div class="stat-value">BiLSTM</div>
+                <div class="stat-label">Model Architecture</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">13,000+</div>
+                <div class="stat-label">Training Samples</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">40</div>
+                <div class="stat-label">MFCC Features</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">&lt;5s</div>
+                <div class="stat-label">Analysis Time</div>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 30px;">
+            Our BiLSTM neural network is trained on the SceneFake dataset and uses MFCC feature extraction for robust deepfake detection.
+        </p>
+    </section>
+    
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <h2>Get In Touch</h2>
+        <p>Have questions or want to collaborate? We'd love to hear from you!</p>
+        <div class="contact-info">
+            <div class="contact-item">
+                <a href="mailto:atharvsingh.edu@gmail.com" class="team-email">
+                    <span>📧</span> atharvsingh.edu@gmail.com
+                </a>
+            </div>
+            <div class="contact-item">
+                <span>🌐</span> www.echoshield.com
+            </div>
+            <div class="contact-item">
+                <span>📍</span> CSE Department, IMSEC Ghaziabad
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

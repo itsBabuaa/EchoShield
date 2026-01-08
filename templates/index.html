@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Upload Section -->
+<div class="card">
+    <h2 class="card-title">
+        <span>📁</span>
+        Upload Audio File
+    </h2>
+    
+    <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">🎵</div>
+        <p class="upload-text">Drag & drop your audio file here</p>
+        <p class="upload-hint">or click to browse</p>
+        <p class="upload-hint">Supported formats: WAV, MP3, FLAC (Max 16MB)</p>
+        <input type="file" id="audioFile" accept=".wav,.mp3,.flac" style="display: none;">
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="btn btn-primary" id="uploadBtn" disabled>
+            Analyze Audio
+        </button>
+    </div>
+</div>
+
+<!-- Recording Section -->
+<div class="card">
+    <h2 class="card-title">
+        <span>🎤</span>
+        Record Audio
+    </h2>
+    
+    <div class="recording-controls">
+        <button class="record-btn" id="recordBtn" title="Start Recording">
+            ⏺️
+        </button>
+        <button class="btn btn-secondary" id="stopBtn" disabled>
+            Stop Recording
+        </button>
+    </div>
+    
+    <div id="recordingStatus" style="text-align: center; color: var(--text-secondary);">
+        Click the record button to start
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; display: none;" id="analyzeRecordingContainer">
+        <button class="btn btn-primary" id="analyzeRecordingBtn">
+            Analyze Recording
+        </button>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div class="result-container" id="resultsContainer">
+    <div class="card">
+        <h2 class="card-title">
+            <span>📊</span>
+            Analysis Results
+        </h2>
+        
+        <!-- Prediction Result -->
+        <div style="text-align: center;">
+            <div class="result-badge" id="resultBadge">REAL</div>
+            
+            <!-- Confidence Gauge -->
+            <div class="confidence-gauge" id="confidenceGauge">
+                <div class="gauge-circle">
+                    <div class="gauge-inner">
+                        <div class="gauge-value" id="gaugeValue">0%</div>
+                        <div class="gauge-label">Confidence</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Probabilities -->
+            <div style="display: flex; justify-content: center; gap: 40px; margin: 20px 0;">
+                <div>
+                    <div style="color: var(--success-color); font-size: 1.5rem; font-weight: 700;" id="realProb">0%</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Real</div>
+                </div>
+                <div>
+                    <div style="color: var(--danger-color); font-size: 1.5rem; font-weight: 700;" id="fakeProb">0%</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Fake</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transcript -->
+        <div style="margin-top: 30px;">
+            <h3 style="color: var(--primary-color); margin-bottom: 15px;">
+                <span>📝</span> Transcript
+            </h3>
+            <div class="transcript-box" id="transcriptBox">
+                Transcribing audio...
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chatbot Section -->
+    <div class="card">
+        <h2 class="card-title">
+            <span>💬</span>
+            AI Assistant
+            <button class="btn btn-secondary" id="clearChatBtn" style="margin-left: auto; padding: 8px 16px; font-size: 0.9rem;">
+                Clear Chat
+            </button>
+        </h2>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message assistant">
+                    Hello! I'm here to help you understand the audio analysis results. Feel free to ask me any questions about the detection, confidence scores, or deepfake technology in general.
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Ask me anything about the results..."
+                    autocomplete="off"
+                >
+                <button class="btn btn-primary" id="sendChatBtn">
+                    Send
+                </button>
+            </div>
+        </div>
+        
+        <div id="chatError" class="alert alert-error" style="display: none; margin-top: 15px;">
+            Chatbot service not configured. Please set GROQ_API_KEY in .env file.
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div style="text-align: center;">
+        <div class="loading-spinner"></div>
+        <p style="margin-top: 20px; font-size: 1.2rem;">Analyzing audio...</p>
+    </div>
+</div>
+
+<!-- Alert Container -->
+<div id="alertContainer"></div>
+
+{% endblock %}

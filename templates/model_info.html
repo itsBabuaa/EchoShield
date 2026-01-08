@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Model Info - EchoShield{% endblock %}
+
+{% block content %}
+<div class="model-info-container">
+    <h1 class="page-title">Model Performance & Architecture</h1>
+    <p class="model-intro">Our BiLSTM-based deepfake detection model is trained on thousands of audio samples to achieve industry-leading accuracy.</p>
+    
+    <!-- Performance Metrics -->
+    <section class="metrics-section">
+        <h2>Performance Metrics</h2>
+        <div class="metrics-grid">
+            <div class="metric-card primary">
+                <div class="metric-icon">🎯</div>
+                <div class="metric-value">{{ "%.1f"|format(metrics.accuracy) }}%</div>
+                <div class="metric-label">Accuracy</div>
+                <div class="metric-description">Overall correctness of predictions</div>
+            </div>
+            
+            <div class="metric-card highlight">
+                <div class="metric-icon">✓</div>
+                <div class="metric-value">{{ "%.1f"|format(metrics.precision) }}%</div>
+                <div class="metric-label">Precision</div>
+                <div class="metric-description">Accuracy of positive predictions</div>
+            </div>
+            
+            <div class="metric-card primary">
+                <div class="metric-icon">🔍</div>
+                <div class="metric-value">{{ "%.1f"|format(metrics.recall) }}%</div>
+                <div class="metric-label">Recall</div>
+                <div class="metric-description">Ability to find all positives</div>
+            </div>
+            
+            <div class="metric-card highlight">
+                <div class="metric-icon">⚖️</div>
+                <div class="metric-value">{{ "%.1f"|format(metrics.f1_score) }}%</div>
+                <div class="metric-label">F1 Score</div>
+                <div class="metric-description">Harmonic mean of precision & recall</div>
+            </div>
+            
+            <div class="metric-card highlight">
+                <div class="metric-icon">📊</div>
+                <div class="metric-value">{{ "%.1f"|format(metrics.auc_roc) }}%</div>
+                <div class="metric-label">AUC-ROC</div>
+                <div class="metric-description">Area under ROC curve</div>
+            </div>
+            
+            <div class="metric-card primary">
+                <div class="metric-icon">⚡</div>
+                <div class="metric-value">&lt;5s</div>
+                <div class="metric-label">Inference Time</div>
+                <div class="metric-description">Average prediction speed</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ROC Curve Visualization -->
+    <section class="visualization-section">
+        <h2>ROC Curve Analysis</h2>
+        <div class="roc-container">
+            <div class="roc-info">
+                <h3>What is ROC?</h3>
+                <p>The Receiver Operating Characteristic (ROC) curve illustrates the diagnostic ability of our binary classifier. It plots the True Positive Rate against the False Positive Rate at various threshold settings.</p>
+                
+                <div class="roc-stats">
+                    <div class="roc-stat">
+                        <span class="stat-label">AUC Score:</span>
+                        <span class="stat-value">{{ "%.1f"|format(metrics.auc_roc) }}%</span>
+                    </div>
+                    <div class="roc-stat">
+                        <span class="stat-label">Interpretation:</span>
+                        <span class="stat-value">Good</span>
+                    </div>
+                    <div class="roc-stat">
+                        <span class="stat-label">True Positive Rate:</span>
+                        <span class="stat-value">{{ "%.1f"|format(metrics.recall) }}%</span>
+                    </div>
+                    <div class="roc-stat">
+                        <span class="stat-label">Precision:</span>
+                        <span class="stat-value">{{ "%.1f"|format(metrics.precision) }}%</span>
+                    </div>
+                </div>
+                
+                <div class="interpretation-guide">
+                    <h4>AUC Score Interpretation:</h4>
+                    <ul>
+                        <li><strong>0.90 - 1.00:</strong> Excellent</li>
+                        <li><strong>0.80 - 0.90:</strong> Good</li>
+                        <li><strong>0.70 - 0.80:</strong> Fair</li>
+                        <li><strong>0.60 - 0.70:</strong> Poor</li>
+                        <li><strong>0.50 - 0.60:</strong> Fail</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="roc-chart">
+                <svg viewBox="0 0 400 400" class="roc-svg">
+                    <!-- Grid -->
+                    <line x1="50" y1="50" x2="50" y2="350" stroke="#333" stroke-width="2"/>
+                    <line x1="50" y1="350" x2="350" y2="350" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- Grid lines -->
+                    <line x1="50" y1="110" x2="350" y2="110" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="50" y1="170" x2="350" y2="170" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="50" y1="230" x2="350" y2="230" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="50" y1="290" x2="350" y2="290" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    
+                    <line x1="110" y1="50" x2="110" y2="350" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="170" y1="50" x2="170" y2="350" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="230" y1="50" x2="230" y2="350" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="290" y1="50" x2="290" y2="350" stroke="#222" stroke-width="1" stroke-dasharray="5,5"/>
+                    
+                    <!-- Diagonal reference line (random classifier) -->
+                    <line x1="50" y1="350" x2="350" y2="50" stroke="#666" stroke-width="2" stroke-dasharray="10,5"/>
+                    
+                    <!-- ROC Curve (excellent performance) -->
+                    <path d="M 50 350 Q 60 200, 80 120 T 150 60 T 350 50" 
+                          fill="none" 
+                          stroke="url(#rocGradient)" 
+                          stroke-width="3"/>
+                    
+                    <!-- Area under curve -->
+                    <path d="M 50 350 Q 60 200, 80 120 T 150 60 T 350 50 L 350 350 Z" 
+                          fill="url(#rocGradient)" 
+                          opacity="0.2"/>
+                    
+                    <!-- Labels -->
+                    <text x="200" y="380" text-anchor="middle" fill="#8b5cf6" font-size="14">False Positive Rate</text>
+                    <text x="20" y="200" text-anchor="middle" fill="#8b5cf6" font-size="14" transform="rotate(-90 20 200)">True Positive Rate</text>
+                    
+                    <!-- Axis labels -->
+                    <text x="50" y="365" text-anchor="middle" fill="#999" font-size="12">0.0</text>
+                    <text x="350" y="365" text-anchor="middle" fill="#999" font-size="12">1.0</text>
+                    <text x="35" y="355" text-anchor="end" fill="#999" font-size="12">0.0</text>
+                    <text x="35" y="55" text-anchor="end" fill="#999" font-size="12">1.0</text>
+                    
+                    <!-- AUC label -->
+                    <text x="250" y="250" fill="#8b5cf6" font-size="16" font-weight="bold">AUC = {{ "%.2f"|format(metrics.auc_roc / 100) }}</text>
+                    
+                    <!-- Gradient definition -->
+                    <defs>
+                        <linearGradient id="rocGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Training Data -->
+    <section class="data-section">
+        <h2>Training Data</h2>
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-icon">📚</div>
+                <div class="data-value">{{ "{:,}".format(metrics.training_samples) }}</div>
+                <div class="data-label">Training Samples</div>
+            </div>
+            <div class="data-card">
+                <div class="data-icon">✅</div>
+                <div class="data-value">{{ "{:,}".format(metrics.validation_samples) }}</div>
+                <div class="data-label">Validation Samples</div>
+            </div>
+            <div class="data-card">
+                <div class="data-icon">🧪</div>
+                <div class="data-value">
+                    {% if metrics.test_samples is number %}
+                    {{ "{:,}".format(metrics.test_samples) }}
+                    {% else %}
+                    {{ metrics.test_samples }}
+                    {% endif %}
+                </div>
+                <div class="data-label">Test Samples</div>
+            </div>
+        </div>
+        
+        <div class="dataset-info">
+            <h3>Dataset: SceneFake</h3>
+            <p>Our model is trained on the SceneFake dataset, which contains authentic and synthetic audio samples covering various scenarios, speakers, and generation techniques.</p>
+            <ul>
+                <li><strong>Real Audio:</strong> Genuine human speech recordings</li>
+                <li><strong>Fake Audio:</strong> AI-generated speech from multiple synthesis methods</li>
+                <li><strong>Diversity:</strong> Multiple speakers, accents, and recording conditions</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Model Architecture -->
+    <section class="architecture-section">
+        <h2>Model Architecture</h2>
+        
+        <div class="arch-overview">
+            <div class="arch-stat">
+                <span class="arch-label">Total Parameters:</span>
+                <span class="arch-value">{{ metrics.parameters if metrics.parameters != 'TBD' else 'Calculating...' }}</span>
+            </div>
+            <div class="arch-stat">
+                <span class="arch-label">Input Shape:</span>
+                <span class="arch-value">{{ metrics.architecture.input_shape }}</span>
+            </div>
+            <div class="arch-stat">
+                <span class="arch-label">Model Type:</span>
+                <span class="arch-value">BiLSTM</span>
+            </div>
+        </div>
+        
+        <div class="layers-container">
+            <h3>Network Layers</h3>
+            <div class="layers-list">
+                {% for layer in metrics.architecture.layers %}
+                <div class="layer-item">
+                    <div class="layer-number">{{ loop.index }}</div>
+                    <div class="layer-name">{{ layer }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="features-container">
+            <h3>Feature Extraction</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="feature-label">Type:</span>
+                    <span class="feature-value">{{ metrics.features.type }}</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-label">Coefficients:</span>
+                    <span class="feature-value">{{ metrics.features.n_coefficients }}</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-label">Sample Rate:</span>
+                    <span class="feature-value">{{ "{:,}".format(metrics.features.sample_rate) }} Hz</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-label">Max Length:</span>
+                    <span class="feature-value">{{ metrics.features.max_length }} frames</span>
+                </div>
+            </div>
+            
+            <div class="mfcc-explanation">
+                <h4>What are MFCCs?</h4>
+                <p>Mel-Frequency Cepstral Coefficients (MFCCs) are features that represent the short-term power spectrum of audio. They capture the unique characteristics of human speech and are highly effective for distinguishing between real and synthetic audio.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Training Configuration -->
+    <section class="training-section">
+        <h2>Training Configuration</h2>
+        <div class="training-grid">
+            <div class="training-card">
+                <div class="training-label">Epochs</div>
+                <div class="training-value">{{ metrics.epochs }}</div>
+            </div>
+            <div class="training-card">
+                <div class="training-label">Batch Size</div>
+                <div class="training-value">{{ metrics.batch_size }}</div>
+            </div>
+            <div class="training-card">
+                <div class="training-label">Learning Rate</div>
+                <div class="training-value">{{ metrics.learning_rate }}</div>
+            </div>
+            <div class="training-card">
+                <div class="training-label">Optimizer</div>
+                <div class="training-value">{{ metrics.optimizer.type }}</div>
+            </div>
+            <div class="training-card">
+                <div class="training-label">Loss Function</div>
+                <div class="training-value">{{ metrics.loss_function }}</div>
+            </div>
+            <div class="training-card">
+                <div class="training-label">Gradient Clipping</div>
+                <div class="training-value">{{ metrics.optimizer.clipnorm }}</div>
+            </div>
+        </div>
+        
+        <div class="callbacks-section">
+            <h3>Training Callbacks</h3>
+            <ul class="callbacks-list">
+                {% for callback in metrics.callbacks %}
+                <li>{{ callback }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+    
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Try It Yourself</h2>
+        <p>Experience our high-performance model in action</p>
+        <a href="/detect" class="btn-primary btn-large">Detect Deepfakes Now</a>
+    </section>
+</div>
+{% endblock %}

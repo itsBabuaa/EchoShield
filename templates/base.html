@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EchoShield - AI-Powered Deepfake Audio Detection{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1 class="logo">
+                    <a href="/">
+                        EchoShield
+                    </a>
+                </h1>
+                <nav class="main-nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/detect" class="nav-link">Detect</a>
+                    <a href="/model-info" class="nav-link">Model Info</a>
+                    <a href="/learn-more" class="nav-link">Learn More</a>
+                    <a href="/about" class="nav-link">About Us</a>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="/">Home</a>
+                    <a href="/detect">Detect</a>
+                    <a href="/model-info">Model Info</a>
+                    <a href="/learn-more">Learn More</a>
+                    <a href="/about">About Us</a>
+                </div>
+                <p>&copy; 2026 EchoShield | Powered by BiLSTM & AI</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
