@@ -1,4 +1,4 @@
-# Deepfake Audio Detector
+# EchoShield
 
 A Flask-based web application that detects deepfake audio using a BiLSTM (Bidirectional Long Short-Term Memory) neural network model. The system allows users to upload audio files or record audio directly through the web interface and provides real-time predictions on whether the audio is authentic or synthetically generated.
 
