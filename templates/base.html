@@ -6,7 +6,7 @@
     <title>{% block title %}EchoShield - AI-Powered Deepfake Audio Detection{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -19,7 +19,12 @@
                         EchoShield
                     </a>
                 </h1>
-                <nav class="main-nav">
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <nav class="main-nav" id="mainNav">
                     <a href="/" class="nav-link">Home</a>
                     <a href="/detect" class="nav-link">Detect</a>
                     <a href="/model-info" class="nav-link">Model Info</a>
