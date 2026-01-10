@@ -4,19 +4,30 @@
 <!-- Upload Section -->
 <div class="card">
     <h2 class="card-title">
-        <span>📁</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+            <polyline points="13 2 13 9 20 9"/>
+        </svg>
         Upload Audio File
     </h2>
     
     <div class="upload-area" id="uploadArea">
-        <div class="upload-icon">🎵</div>
+        <div class="upload-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+            </svg>
+        </div>
         <p class="upload-text">Drag & drop your audio file here</p>
         <p class="upload-hint">or click to browse</p>
-        <p class="upload-hint">Supported formats: WAV, MP3, FLAC (Max 16MB)</p>
+        <p class="upload-hint">Supported formats: WAV, MP3, FLAC (Max 50MB)</p>
         <input type="file" id="audioFile" accept=".wav,.mp3,.flac" style="display: none;">
     </div>
     
-    <div style="text-align: center; margin-top: 20px;">
+    <p class="upload-disclaimer">Our model can be wrong sometimes. Please verify results independently.</p>
+    
+    <div style="text-align: center; margin-top: 15px;">
         <button class="btn btn-primary" id="uploadBtn" disabled>
             Analyze Audio
         </button>
@@ -26,16 +37,23 @@
 <!-- Recording Section -->
 <div class="card">
     <h2 class="card-title">
-        <span>🎤</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
         Record Audio
     </h2>
     
     <div class="recording-controls">
         <button class="record-btn" id="recordBtn" title="Start Recording">
-            ⏺️
-        </button>
-        <button class="btn btn-secondary" id="stopBtn" disabled>
-            Stop Recording
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="record-icon">
+                <circle cx="12" cy="12" r="8"/>
+            </svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="stop-icon" style="display: none;">
+                <rect x="6" y="6" width="12" height="12" rx="2"/>
+            </svg>
         </button>
     </div>
     
@@ -52,43 +70,171 @@
 
 <!-- Results Section -->
 <div class="result-container" id="resultsContainer">
+    <!-- Audio Playback -->
+    <div class="card" id="audioPlaybackCard" style="display: none;">
+        <h2 class="card-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+            </svg>
+            Audio Playback
+        </h2>
+        
+        <!-- Waveform Visualization -->
+        <div class="waveform-container" id="waveformContainer">
+            <canvas id="waveformCanvas" width="800" height="80"></canvas>
+            <div class="waveform-progress" id="waveformProgress"></div>
+        </div>
+        
+        <div class="modern-audio-player">
+            <audio id="audioPlayer" style="display: none;">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <div class="player-controls">
+                <button class="play-btn" id="playBtn">
+                    <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                        <rect x="6" y="4" width="4" height="16"/>
+                        <rect x="14" y="4" width="4" height="16"/>
+                    </svg>
+                </button>
+                
+                <div class="player-progress-container">
+                    <div class="player-info">
+                        <span class="audio-filename" id="audioFilename">audio.wav</span>
+                        <span class="audio-time">
+                            <span id="currentTime">0:00</span> / <span id="audioDuration">0:00</span>
+                        </span>
+                    </div>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                        <div class="progress-handle" id="progressHandle"></div>
+                    </div>
+                </div>
+                
+                <div class="speed-control">
+                    <button class="speed-btn" id="speedBtn">1x</button>
+                </div>
+                
+                <div class="volume-control">
+                    <button class="volume-btn" id="volumeBtn">
+                        <svg class="volume-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                        </svg>
+                        <svg class="mute-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                            <line x1="23" y1="9" x2="17" y2="15"/>
+                            <line x1="17" y1="9" x2="23" y2="15"/>
+                        </svg>
+                    </button>
+                    <div class="volume-slider-container">
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="card">
         <h2 class="card-title">
-            <span>📊</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
             Analysis Results
         </h2>
         
         <!-- Prediction Result -->
-        <div style="text-align: center;">
-            <div class="result-badge" id="resultBadge">REAL</div>
-            
-            <!-- Confidence Gauge -->
-            <div class="confidence-gauge" id="confidenceGauge">
-                <div class="gauge-circle">
-                    <div class="gauge-inner">
-                        <div class="gauge-value" id="gaugeValue">0%</div>
-                        <div class="gauge-label">Confidence</div>
+        <div class="results-layout">
+            <!-- Left Column: Gauge and Badge -->
+            <div class="results-left">
+                <div class="result-badge" id="resultBadge">REAL</div>
+                
+                <!-- Confidence Gauge -->
+                <div class="confidence-gauge" id="confidenceGauge">
+                    <div class="gauge-circle">
+                        <div class="gauge-inner">
+                            <div class="gauge-value" id="gaugeValue">0%</div>
+                            <div class="gauge-label">Confidence</div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Probabilities -->
-            <div style="display: flex; justify-content: center; gap: 40px; margin: 20px 0;">
-                <div>
-                    <div style="color: var(--success-color); font-size: 1.5rem; font-weight: 700;" id="realProb">0%</div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Real</div>
-                </div>
-                <div>
-                    <div style="color: var(--danger-color); font-size: 1.5rem; font-weight: 700;" id="fakeProb">0%</div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem;">Fake</div>
+            <!-- Right Column: Metrics -->
+            <div class="results-right">
+                <!-- Additional Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-icon-small">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value-small" id="processingTime">-</div>
+                        <div class="metric-label-small">Processing Time</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-icon-small">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M2 12h20"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value-small" id="audioDurationMetric">-</div>
+                        <div class="metric-label-small">Duration</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-icon-small">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value-small" id="audioFileSize">-</div>
+                        <div class="metric-label-small">File Size</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-icon-small">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        <div class="metric-value-small" id="sampleRate">-</div>
+                        <div class="metric-label-small">Sample Rate</div>
+                    </div>
                 </div>
             </div>
         </div>
         
+        <!-- Disclaimer Warning -->
+        <div class="disclaimer-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>Our model can be wrong sometimes. This analysis is for informational purposes only. Always verify with additional sources before making important decisions.</span>
+        </div>
+        
         <!-- Transcript -->
-        <div style="margin-top: 30px;">
-            <h3 style="color: var(--primary-color); margin-bottom: 15px;">
-                <span>📝</span> Transcript
+        <div style="margin-top: 20px;">
+            <h3 style="color: var(--primary-color); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                Transcript
             </h3>
             <div class="transcript-box" id="transcriptBox">
                 Transcribing audio...
@@ -99,8 +245,12 @@
     <!-- Chatbot Section -->
     <div class="card">
         <h2 class="card-title">
-            <span>💬</span>
-            AI Assistant
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                <line x1="9" y1="10" x2="15" y2="10"/>
+                <line x1="9" y1="14" x2="13" y2="14"/>
+            </svg>
+            EchoBot
             <button class="btn btn-secondary" id="clearChatBtn" style="margin-left: auto; padding: 8px 16px; font-size: 0.9rem;">
                 Clear Chat
             </button>
@@ -109,7 +259,7 @@
         <div class="chat-container">
             <div class="chat-messages" id="chatMessages">
                 <div class="chat-message assistant">
-                    Hello! I'm here to help you understand the audio analysis results. Feel free to ask me any questions about the detection, confidence scores, or deepfake technology in general.
+                    Hello! I'm EchoBot, your AI assistant. I'm here to help you understand the audio analysis results. Feel free to ask me any questions about the detection, confidence scores, or deepfake technology in general.
                 </div>
             </div>
             
@@ -135,13 +285,65 @@
 
 <!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay" style="display: none;">
-    <div style="text-align: center;">
-        <div class="loading-spinner"></div>
-        <p style="margin-top: 20px; font-size: 1.2rem;">Analyzing audio...</p>
+    <div class="loading-spinner"></div>
+    <div class="loading-status" id="loadingStatus">Uploading audio file...</div>
+</div>
+
+<!-- Keyboard Shortcuts Modal -->
+<div class="shortcuts-modal" id="shortcutsModal" style="display: none;">
+    <div class="shortcuts-content">
+        <div class="shortcuts-header">
+            <h3>Keyboard Shortcuts</h3>
+            <button class="shortcuts-close" id="closeShortcuts">&times;</button>
+        </div>
+        <div class="shortcuts-list">
+            <div class="shortcut-item">
+                <kbd>Space</kbd>
+                <span>Play / Pause audio</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>R</kbd>
+                <span>Start / Stop recording</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Enter</kbd>
+                <span>Analyze audio</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>M</kbd>
+                <span>Mute / Unmute</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>←</kbd>
+                <span>Seek backward 5s</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>→</kbd>
+                <span>Seek forward 5s</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>↑</kbd>
+                <span>Volume up</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>↓</kbd>
+                <span>Volume down</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>?</kbd>
+                <span>Show this help</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Esc</kbd>
+                <span>Close modal</span>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Alert Container -->
-<div id="alertContainer"></div>
+<!-- Keyboard Shortcut Hint -->
+<div class="shortcut-hint" id="shortcutHint">
+    Press <kbd>?</kbd> for keyboard shortcuts
+</div>
 
 {% endblock %}
