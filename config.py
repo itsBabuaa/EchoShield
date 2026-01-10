@@ -29,5 +29,5 @@ TEST_PATH = os.getenv('TEST_PATH', './scenefake/eval')
 # Allowed audio extensions
 ALLOWED_EXTENSIONS = {'wav', 'mp3', 'flac'}
 
-# Max file size (16MB)
-MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+# Max file size (50MB)
+MAX_CONTENT_LENGTH = 50 * 1024 * 1024
