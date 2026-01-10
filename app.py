@@ -254,8 +254,12 @@ def predict():
             features = audio_processor.preprocess_for_prediction(filepath)
             prediction = prediction_engine.predict(features)
             
-            # Get transcription
-            transcript = transcriber.transcribe(filepath)
+            # Get transcription (with error handling)
+            try:
+                transcript = transcriber.transcribe(filepath)
+            except Exception as trans_error:
+                print(f"Transcription error: {trans_error}")
+                transcript = "[Transcription unavailable]"
             
             # Store results in session for chatbot
             session['last_prediction'] = prediction
@@ -320,8 +324,12 @@ def transcribe_audio():
         file.save(filepath)
         
         try:
-            # Get transcription
-            transcript = transcriber.transcribe(filepath)
+            # Get transcription (with error handling)
+            try:
+                transcript = transcriber.transcribe(filepath)
+            except Exception as trans_error:
+                print(f"Transcription error: {trans_error}")
+                transcript = "[Transcription unavailable]"
             
             return jsonify({
                 'success': True,
@@ -422,7 +430,7 @@ def request_entity_too_large(error):
     """Handle file too large error."""
     return jsonify({
         'success': False,
-        'error': 'File size exceeds maximum limit (16MB).'
+        'error': 'File size exceeds maximum limit (50MB).'
     }), 413
 
 
