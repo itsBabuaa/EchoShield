@@ -1,5 +1,3 @@
-// Deepfake Audio Detector - Frontend JavaScript
-
 // Global variables
 let selectedFile = null;
 let mediaRecorder = null;
@@ -1047,5 +1045,3 @@ document.addEventListener('keydown', (e) => {
             break;
     }
 });
-
-console.log('All features initialized: Batch Processing, Waveform, Advanced Metrics, Keyboard Shortcuts, Social Sharing');
