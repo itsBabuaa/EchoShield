@@ -53,6 +53,116 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Mobile Navigation Script (runs on all pages) -->
+    <script>
+    (function() {
+        const hamburger = document.getElementById('hamburger');
+        const mainNav = document.getElementById('mainNav');
+        
+        if (!hamburger || !mainNav) {
+            console.log('Mobile nav elements not found');
+            return;
+        }
+        
+        console.log('Mobile navigation initialized');
+        
+        // Create nav overlay
+        let navOverlay = document.getElementById('navOverlay');
+        if (!navOverlay) {
+            navOverlay = document.createElement('div');
+            navOverlay.id = 'navOverlay';
+            navOverlay.className = 'nav-overlay';
+            document.body.appendChild(navOverlay);
+        }
+        
+        function openMobileNav() {
+            console.log('Opening mobile nav');
+            hamburger.classList.add('active');
+            mainNav.classList.add('active');
+            navOverlay.classList.add('active');
+            document.body.classList.add('nav-open');
+        }
+        
+        function closeMobileNav() {
+            console.log('Closing mobile nav');
+            hamburger.classList.remove('active');
+            mainNav.classList.remove('active');
+            navOverlay.classList.remove('active');
+            document.body.classList.remove('nav-open');
+        }
+        
+        // Hamburger menu toggle
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Hamburger clicked');
+            if (mainNav.classList.contains('active')) {
+                closeMobileNav();
+            } else {
+                openMobileNav();
+            }
+        });
+        
+        // PREVENT nav area clicks from bubbling up (so they don't close the menu)
+        mainNav.addEventListener('click', function(e) {
+            console.log('Nav area clicked - preventing close');
+            e.stopPropagation();
+        });
+        
+        // Handle nav link clicks specifically (these SHOULD close and navigate)
+        mainNav.querySelectorAll('.nav-link').forEach(function(link, index) {
+            console.log('Setting up link', index, ':', link.getAttribute('href'));
+            
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                console.log('Nav link clicked - navigating to:', href);
+                
+                // Close menu after a short delay to allow navigation
+                setTimeout(function() {
+                    closeMobileNav();
+                }, 50);
+                
+                // Let the browser handle navigation naturally
+            });
+            
+            // Handle touch events for mobile devices
+            link.addEventListener('touchstart', function(e) {
+                console.log('Touch start on:', this.getAttribute('href'));
+                // Add visual feedback on touch start
+                this.style.backgroundColor = 'rgba(139, 92, 246, 0.4)';
+            });
+            
+            link.addEventListener('touchend', function(e) {
+                const href = this.getAttribute('href');
+                console.log('Nav link touched - navigating to:', href);
+                
+                // Remove visual feedback
+                this.style.backgroundColor = '';
+                
+                // Close menu after navigation
+                setTimeout(function() {
+                    closeMobileNav();
+                }, 50);
+            });
+        });
+        
+        // Close ONLY on overlay click (outside the nav menu)
+        navOverlay.addEventListener('click', function(e) {
+            console.log('Overlay clicked - closing nav');
+            closeMobileNav();
+        });
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mainNav.classList.contains('active')) {
+                console.log('Escape key pressed - closing nav');
+                closeMobileNav();
+            }
+        });
+        
+        console.log('Mobile navigation setup complete');
+    })();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
