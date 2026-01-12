@@ -1,13 +1,3 @@
-"""
-BiLSTM Model Training Script for Deepfake Audio Detection
-
-This script trains a BiLSTM model on the SceneFake dataset for detecting
-deepfake audio. It includes data loading, MFCC feature extraction, model
-building, training, and evaluation.
-
-Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
-"""
-
 import os
 import numpy as np
 import librosa
@@ -107,9 +97,7 @@ def load_audio_signal(file_path: str, sr: int = None) -> Tuple[np.ndarray, int]:
     return audio, sample_rate
 
 
-# =============================================================================
-# MFCC Feature Extraction (Task 2.2)
-# =============================================================================
+# MFCC Feature Extraction
 
 def extract_mfcc(
     audio: np.ndarray,
@@ -493,3 +481,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
