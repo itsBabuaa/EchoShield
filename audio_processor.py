@@ -3,15 +3,13 @@ Audio Processor Component for Deepfake Audio Detection
 
 This module handles audio loading, format conversion, and MFCC feature extraction
 for the prediction pipeline.
-
-Requirements: 2.2, 2.4, 8.1, 8.3
 """
 
 import numpy as np
 import librosa
 import soundfile as sf
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict
 import config
 
 
@@ -202,3 +200,86 @@ class AudioProcessor:
         features = np.expand_dims(features, axis=0)
         
         return features
+    
+    def get_audio_metrics(self, file_path: str) -> Dict:
+        """
+        Extract comprehensive audio metrics for analysis.
+        
+        Args:
+            file_path: Path to audio file
+            
+        Returns:
+            Dictionary containing audio metrics:
+            - duration: Audio duration in seconds
+            - sample_rate: Sample rate in Hz
+            - file_size: File size in bytes
+            - peak_amplitude: Maximum absolute amplitude (0-1)
+            - rms_level: Root mean square level in dB
+            - dynamic_range: Dynamic range in dB
+            - zero_crossings: Number of zero crossings per second
+            - spectral_centroid: Average spectral centroid in Hz
+            - noise_floor: Estimated noise floor in dB
+        """
+        try:
+            # Load audio
+            audio, sr = self.load_audio(file_path)
+            
+            # Get file size
+            file_size = int(Path(file_path).stat().st_size)
+            
+            # Calculate duration
+            duration = float(len(audio) / sr)
+            
+            # Peak amplitude (normalized 0-1)
+            peak_amplitude = float(np.max(np.abs(audio)))
+            
+            # RMS level in dB
+            rms = float(np.sqrt(np.mean(audio ** 2)))
+            rms_db = float(20 * np.log10(rms + 1e-10))  # Add small value to avoid log(0)
+            
+            # Dynamic range (difference between peak and RMS in dB)
+            peak_db = float(20 * np.log10(peak_amplitude + 1e-10))
+            dynamic_range = float(peak_db - rms_db)
+            
+            # Zero crossing rate (per second)
+            zero_crossings = librosa.feature.zero_crossing_rate(audio)[0]
+            zcr_per_second = float(np.mean(zero_crossings) * sr)
+            
+            # Spectral centroid (average frequency in Hz)
+            spectral_centroid = librosa.feature.spectral_centroid(y=audio, sr=sr)[0]
+            avg_spectral_centroid = float(np.mean(spectral_centroid))
+            
+            # Noise floor estimation (using lowest 10% of RMS values)
+            frame_length = 2048
+            hop_length = 512
+            frames = librosa.util.frame(audio, frame_length=frame_length, hop_length=hop_length)
+            frame_rms = np.sqrt(np.mean(frames ** 2, axis=0))
+            sorted_rms = np.sort(frame_rms)
+            noise_floor_rms = float(np.mean(sorted_rms[:max(1, len(sorted_rms) // 10)]))
+            noise_floor_db = float(20 * np.log10(noise_floor_rms + 1e-10))
+            
+            return {
+                'duration': round(duration, 2),
+                'sample_rate': int(sr),
+                'file_size': file_size,
+                'peak_amplitude': round(peak_amplitude, 4),
+                'rms_level': round(rms_db, 1),
+                'dynamic_range': round(dynamic_range, 1),
+                'zero_crossings': int(zcr_per_second),
+                'spectral_centroid': int(avg_spectral_centroid),
+                'noise_floor': round(noise_floor_db, 1)
+            }
+            
+        except Exception as e:
+            # Return default values if metrics extraction fails
+            return {
+                'duration': 0.0,
+                'sample_rate': int(self.sample_rate),
+                'file_size': 0,
+                'peak_amplitude': 0.0,
+                'rms_level': -60.0,
+                'dynamic_range': 0.0,
+                'zero_crossings': 0,
+                'spectral_centroid': 0,
+                'noise_floor': -60.0
+            }
