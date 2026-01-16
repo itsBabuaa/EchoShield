@@ -1,3 +1,10 @@
+"""
+Chatbot Component for Deepfake Audio Detection
+
+This module provides an AI-powered chatbot using Groq API for interactive
+analysis and explanations of audio detection results.
+"""
+
 from groq import Groq
 from typing import List, Dict, Optional
 import config
@@ -30,7 +37,7 @@ class Chatbot:
         self.context: Optional[Dict] = None
         self.model =  "llama-3.1-8b-instant"  #"openai/gpt-oss-120b"
     
-    def set_context(self, transcript: str, prediction: Dict):
+    def set_context(self, transcript: str, prediction: Dict, audio_metrics: Dict = None):
         """
         Set audio analysis context for the conversation.
         
@@ -40,10 +47,21 @@ class Chatbot:
                        - 'label': 'real' or 'fake'
                        - 'confidence': confidence score
                        - 'probabilities': probability dict
+            audio_metrics: Optional audio metrics dictionary containing:
+                          - 'duration': Audio duration in seconds
+                          - 'sample_rate': Sample rate in Hz
+                          - 'file_size': File size in bytes
+                          - 'peak_amplitude': Maximum absolute amplitude
+                          - 'rms_level': RMS level in dB
+                          - 'dynamic_range': Dynamic range in dB
+                          - 'zero_crossings': Zero crossings per second
+                          - 'spectral_centroid': Average spectral centroid in Hz
+                          - 'noise_floor': Noise floor in dB
         """
         self.context = {
             'transcript': transcript,
-            'prediction': prediction
+            'prediction': prediction,
+            'audio_metrics': audio_metrics or {}
         }
         
         # Create system message with context
@@ -101,22 +119,85 @@ REFUSE: Travel, finance, rates, hotels, food, shopping, health, politics, news, 
         real_prob = self.context['prediction']['probabilities']['real']
         fake_prob = self.context['prediction']['probabilities']['fake']
         
+        # Build audio metrics section
+        audio_metrics = self.context.get('audio_metrics', {})
+        metrics_section = ""
+        
+        if audio_metrics:
+            duration = audio_metrics.get('duration', 0)
+            sample_rate = audio_metrics.get('sample_rate', 0)
+            file_size = audio_metrics.get('file_size', 0)
+            peak_amplitude = audio_metrics.get('peak_amplitude', 0)
+            rms_level = audio_metrics.get('rms_level', 0)
+            dynamic_range = audio_metrics.get('dynamic_range', 0)
+            zero_crossings = audio_metrics.get('zero_crossings', 0)
+            spectral_centroid = audio_metrics.get('spectral_centroid', 0)
+            noise_floor = audio_metrics.get('noise_floor', 0)
+            
+            # Format file size
+            if file_size >= 1024 * 1024:
+                file_size_str = f"{file_size / (1024 * 1024):.2f} MB"
+            elif file_size >= 1024:
+                file_size_str = f"{file_size / 1024:.2f} KB"
+            else:
+                file_size_str = f"{file_size} bytes"
+            
+            # Format sample rate
+            if sample_rate >= 1000:
+                sample_rate_str = f"{sample_rate / 1000:.1f} kHz"
+            else:
+                sample_rate_str = f"{sample_rate} Hz"
+            
+            metrics_section = f"""
+AUDIO FILE METRICS:
+- Duration: {duration:.2f} seconds
+- Sample Rate: {sample_rate_str}
+- File Size: {file_size_str}
+
+ADVANCED AUDIO ANALYSIS:
+- Peak Amplitude: {peak_amplitude:.4f} (normalized 0-1)
+- RMS Level: {rms_level:.1f} dB
+- Dynamic Range: {dynamic_range:.1f} dB
+- Zero Crossings: {zero_crossings:,} per second
+- Spectral Centroid: {spectral_centroid:,} Hz (average frequency)
+- Noise Floor: {noise_floor:.1f} dB
+
+METRIC EXPLANATIONS:
+- Peak Amplitude: Maximum signal strength (closer to 1 = louder)
+- RMS Level: Average loudness in decibels (higher = louder)
+- Dynamic Range: Difference between loudest and average (higher = more variation)
+- Zero Crossings: How often signal crosses zero (higher = more high-frequency content)
+- Spectral Centroid: "Center of mass" of frequencies (higher = brighter sound)
+- Noise Floor: Background noise level (lower = cleaner audio)
+"""
+        
         return f"""You are EchoBot for EchoShield deepfake audio detection.
 
 {echoshield_info}
 
-ANALYSIS: {label.upper()} | Confidence: {confidence:.1%} | Real: {real_prob:.1%} | Fake: {fake_prob:.1%}
-Transcript: "{transcript}"
+CURRENT AUDIO ANALYSIS:
+- Detection Result: {label.upper()}
+- Confidence: {confidence:.1%}
+- Real Probability: {real_prob:.1%}
+- Fake Probability: {fake_prob:.1%}
+{metrics_section}
+TRANSCRIPT: "{transcript}"
 
 STRICT RULES - NO EXCEPTIONS:
-1. ONLY answer about this analysis, EchoShield, model, or team
-2. REFUSE ALL other topics: travel, finance, rates, hotels, food, shopping, health, politics, news, general questions
-3. If asked unrelated, respond: "I'm EchoBot for EchoShield. I only discuss this audio analysis and our detection system."
-4. Keep answers under 100 words
-5. Explain results clearly
-6. If unsure, say: "I'm not sure. Contact: Atharvsingh.edu@gmail.com"
+1. ONLY answer about this analysis, audio metrics, EchoShield, model, or team
+2. You have full access to all audio metrics above - use them to answer questions
+3. REFUSE ALL other topics: travel, finance, rates, hotels, food, shopping, health, politics, news, general questions
+4. If asked unrelated, respond: "I'm EchoBot for EchoShield. I only discuss this audio analysis and our detection system."
+5. Keep answers under 150 words
+6. Explain audio metrics clearly when asked
+7. If unsure, say: "I'm not sure. Contact: Atharvsingh.edu@gmail.com"
 
-ONLY THESE: Current analysis, confidence meaning, model specs, team info
+TOPICS YOU CAN DISCUSS:
+- Current analysis results and what they mean
+- All audio metrics (duration, sample rate, peak amplitude, RMS, dynamic range, zero crossings, spectral centroid, noise floor)
+- How metrics relate to audio quality and deepfake detection
+- Model specs, accuracy, architecture
+- Team info
 
 REFUSE: Everything else"""
     
