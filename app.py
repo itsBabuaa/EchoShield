@@ -254,6 +254,9 @@ def predict():
             features = audio_processor.preprocess_for_prediction(filepath)
             prediction = prediction_engine.predict(features)
             
+            # Get audio metrics
+            audio_metrics = audio_processor.get_audio_metrics(filepath)
+            
             # Get transcription (with error handling)
             try:
                 transcript = transcriber.transcribe(filepath)
@@ -264,16 +267,18 @@ def predict():
             # Store results in session for chatbot
             session['last_prediction'] = prediction
             session['last_transcript'] = transcript
+            session['last_audio_metrics'] = audio_metrics
             
             # Set chatbot context if available
             chatbot = get_chatbot()
             if chatbot:
-                chatbot.set_context(transcript, prediction)
+                chatbot.set_context(transcript, prediction, audio_metrics)
             
             return jsonify({
                 'success': True,
                 'prediction': prediction,
-                'transcript': transcript
+                'transcript': transcript,
+                'audio_metrics': audio_metrics
             })
         
         finally:
@@ -412,7 +417,8 @@ def clear_chat():
             
             # Re-set context if available
             if 'last_prediction' in session and 'last_transcript' in session:
-                chatbot.set_context(session['last_transcript'], session['last_prediction'])
+                audio_metrics = session.get('last_audio_metrics', None)
+                chatbot.set_context(session['last_transcript'], session['last_prediction'], audio_metrics)
         
         return jsonify({
             'success': True
@@ -448,14 +454,15 @@ def internal_error(error):
         'error': 'Internal server error. Please try again.'
     }), 500
 
+# For Local Host
+# if __name__ == '__main__':
+#     app.run(
+#         debug=config.FLASK_DEBUG,
+#         host='0.0.0.0',
+#         port=5000
+#     )
 
-#if __name__ == '__main__':
-    # app.run(
-    #     debug=config.FLASK_DEBUG,
-    #     host='0.0.0.0',
-    #     port=5000
-    # )
-   
+# For Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(
@@ -463,6 +470,7 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+
 
 
 
