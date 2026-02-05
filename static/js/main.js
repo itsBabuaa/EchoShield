@@ -1,3 +1,5 @@
+// Deepfake Audio Detector - Frontend JavaScript
+
 // Global variables
 let selectedFile = null;
 let mediaRecorder = null;
@@ -11,11 +13,10 @@ let lastPrediction = null;
 // DOM Elements
 const uploadArea = document.getElementById('uploadArea');
 const audioFileInput = document.getElementById('audioFile');
-const uploadBtn = document.getElementById('uploadBtn');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const analyzeHint = document.getElementById('analyzeHint');
 const recordBtn = document.getElementById('recordBtn');
 const recordingStatus = document.getElementById('recordingStatus');
-const analyzeRecordingContainer = document.getElementById('analyzeRecordingContainer');
-const analyzeRecordingBtn = document.getElementById('analyzeRecordingBtn');
 const resultsContainer = document.getElementById('resultsContainer');
 const loadingOverlay = document.getElementById('loadingOverlay');
 const chatInput = document.getElementById('chatInput');
@@ -84,7 +85,8 @@ function handleFileSelect(file) {
     }
     
     selectedFile = file;
-    uploadBtn.disabled = false;
+    recordedBlob = null; // Clear any recorded audio
+    updateAnalyzeButton();
     
     // Update upload area text
     const uploadText = uploadArea.querySelector('.upload-text');
@@ -92,10 +94,30 @@ function handleFileSelect(file) {
     uploadText.style.color = 'var(--primary-color)';
 }
 
-// Upload and analyze
-uploadBtn.addEventListener('click', async () => {
+function updateAnalyzeButton() {
+    if (selectedFile || recordedBlob) {
+        analyzeBtn.disabled = false;
+        if (selectedFile) {
+            analyzeHint.textContent = `Ready to analyze: ${selectedFile.name}`;
+        } else if (recordedBlob) {
+            analyzeHint.textContent = 'Ready to analyze recorded audio';
+        }
+        analyzeHint.style.color = 'var(--primary-color)';
+    } else {
+        analyzeBtn.disabled = true;
+        analyzeHint.textContent = 'Upload a file or record audio to analyze';
+        analyzeHint.style.color = 'var(--text-muted)';
+    }
+}
+
+// Single analyze button handler
+analyzeBtn.addEventListener('click', async () => {
     if (selectedFile) {
         await analyzeAudio(selectedFile);
+    } else if (recordedBlob) {
+        // Convert blob to file
+        const file = new File([recordedBlob], 'recording.wav', { type: 'audio/wav' });
+        await analyzeAudio(file);
     }
 });
 
@@ -128,7 +150,7 @@ recordBtn.addEventListener('click', async () => {
             // Convert to WAV format in browser
             try {
                 recordedBlob = await convertToWav(webmBlob);
-                recordingStatus.textContent = 'Recording complete! Click "Analyze Recording" to proceed.';
+                recordingStatus.textContent = 'Recording complete!';
                 recordingStatus.style.color = 'var(--success-color)';
             } catch (error) {
                 console.error('Conversion error:', error);
@@ -138,7 +160,13 @@ recordBtn.addEventListener('click', async () => {
                 recordingStatus.style.color = 'var(--warning-color)';
             }
             
-            analyzeRecordingContainer.style.display = 'block';
+            selectedFile = null; // Clear any uploaded file
+            updateAnalyzeButton();
+            
+            // Reset upload area
+            const uploadText = uploadArea.querySelector('.upload-text');
+            uploadText.textContent = 'Drag & drop your audio file here';
+            uploadText.style.color = '';
             
             // Stop all tracks
             stream.getTracks().forEach(track => track.stop());
@@ -159,7 +187,6 @@ recordBtn.addEventListener('click', async () => {
         document.querySelector('.stop-icon').style.display = 'block';
         recordingStatus.textContent = 'Recording... Click the button again to stop.';
         recordingStatus.style.color = 'var(--danger-color)';
-        analyzeRecordingContainer.style.display = 'none';
         
     } catch (error) {
         console.error('Error accessing microphone:', error);
@@ -167,13 +194,14 @@ recordBtn.addEventListener('click', async () => {
     }
 });
 
-analyzeRecordingBtn.addEventListener('click', async () => {
-    if (!recordedBlob) return;
-    
-    // Convert blob to file
-    const file = new File([recordedBlob], 'recording.wav', { type: 'audio/wav' });
-    await analyzeAudio(file);
-});
+// Remove the old analyze recording button handler
+// analyzeRecordingBtn.addEventListener('click', async () => {
+//     if (!recordedBlob) return;
+//     
+//     // Convert blob to file
+//     const file = new File([recordedBlob], 'recording.wav', { type: 'audio/wav' });
+//     await analyzeAudio(file);
+// });
 
 // ============================================================================
 // Audio Analysis
@@ -718,8 +746,34 @@ function writeString(view, offset, string) {
 }
 
 // ============================================================================
+// Advanced Metrics Dropdown
+// ============================================================================
+
+const metricsToggle = document.getElementById('metricsToggle');
+const advancedMetrics = document.getElementById('advancedMetrics');
+
+if (metricsToggle && advancedMetrics) {
+    metricsToggle.addEventListener('click', function() {
+        advancedMetrics.classList.toggle('expanded');
+        
+        // Optional: Store preference in localStorage
+        const isExpanded = advancedMetrics.classList.contains('expanded');
+        localStorage.setItem('advancedMetricsExpanded', isExpanded);
+    });
+    
+    // Restore previous state from localStorage
+    const wasExpanded = localStorage.getItem('advancedMetricsExpanded') === 'true';
+    if (wasExpanded) {
+        advancedMetrics.classList.add('expanded');
+    }
+}
+
+// ============================================================================
 // Initialize
 // ============================================================================
+
+// Initialize analyze button state
+updateAnalyzeButton();
 
 console.log('Deepfake Audio Detector initialized');
 
@@ -969,10 +1023,8 @@ document.addEventListener('keydown', (e) => {
             
         case 'Enter':
             e.preventDefault();
-            if (uploadBtn && !uploadBtn.disabled) {
-                uploadBtn.click();
-            } else if (analyzeRecordingBtn && analyzeRecordingContainer.style.display !== 'none') {
-                analyzeRecordingBtn.click();
+            if (analyzeBtn && !analyzeBtn.disabled) {
+                analyzeBtn.click();
             }
             break;
             
