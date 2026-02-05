@@ -16,6 +16,13 @@ from transcriber import Transcriber
 from chatbot import Chatbot
 import config
 
+# Reduce TensorFlow overhead
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+# Explicitly disable GPU
+tf.config.set_visible_devices([], 'GPU')
+
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
@@ -204,8 +211,7 @@ def predict():
     Handle audio upload and prediction.
     
     Accepts audio file upload, processes it, and returns prediction results.
-    
-    Requirements: 2.1, 2.6
+
     
     Returns:
         JSON response with:
@@ -470,6 +476,7 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+
 
 
 
