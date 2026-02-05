@@ -167,7 +167,7 @@ def about():
             'contribution': 'Supervised the team throughout the development of EchoShield, providing guidance on AI ethics, model architecture, and research methodology',
             'email': 'sonali.mathur@imsec.ac.in',
             'github': None,
-            'photo': 'team1.jpg'
+            'photo': 'Sonali-Mathur.jpg'
         },
         {
             'name': 'Atharv Singh',
@@ -476,6 +476,7 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+
 
 
 
