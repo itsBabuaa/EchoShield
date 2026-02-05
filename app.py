@@ -20,9 +20,6 @@ import config
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
-# Explicitly disable GPU
-tf.config.set_visible_devices([], 'GPU')
-
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
@@ -476,6 +473,7 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+
 
 
 
