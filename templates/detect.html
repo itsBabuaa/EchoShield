@@ -3,70 +3,92 @@
 {% block title %}Detect - EchoShield{% endblock %}
 
 {% block content %}
-<!-- Upload Section -->
+<!-- Audio Input Section -->
 <div class="card">
     <h2 class="card-title">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-            <polyline points="13 2 13 9 20 9"/>
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
         </svg>
-        Upload Audio File
+        Audio Input
     </h2>
     
-    <div class="upload-area" id="uploadArea">
-        <div class="upload-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18V5l12-2v13"/>
-                <circle cx="6" cy="18" r="3"/>
-                <circle cx="18" cy="16" r="3"/>
-            </svg>
+    <!-- Side by Side Layout -->
+    <div class="input-layout">
+        <!-- Upload Section -->
+        <div class="input-section upload-section">
+            <h3 class="section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                    <polyline points="13 2 13 9 20 9"/>
+                </svg>
+                Upload File
+            </h3>
+            
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                </div>
+                <p class="upload-text">Drop file or click</p>
+                <p class="upload-hint">WAV, MP3, FLAC</p>
+                <input type="file" id="audioFile" accept=".wav,.mp3,.flac" style="display: none;">
+            </div>
         </div>
-        <p class="upload-text">Drag & drop your audio file here</p>
-        <p class="upload-hint">or click to browse</p>
-        <p class="upload-hint">Supported formats: WAV, MP3, FLAC (Max 50MB)</p>
-        <input type="file" id="audioFile" accept=".wav,.mp3,.flac" style="display: none;">
+        
+        <!-- OR Divider -->
+        <div class="input-divider">
+            <span>OR</span>
+        </div>
+        
+        <!-- Recording Section -->
+        <div class="input-section recording-section">
+            <h3 class="section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="23"/>
+                    <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+                Record Audio
+            </h3>
+            
+            <div class="recording-controls">
+                <button class="record-btn" id="recordBtn" title="Start Recording">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="record-icon">
+                        <circle cx="12" cy="12" r="8"/>
+                    </svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="stop-icon" style="display: none;">
+                        <rect x="6" y="6" width="12" height="12" rx="2"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="recordingStatus" class="recording-status">
+                Click to record
+            </div>
+        </div>
     </div>
     
+    <!-- Disclaimer -->
     <p class="upload-disclaimer">Our model can be wrong sometimes. Please verify results independently.</p>
     
-    <div style="text-align: center; margin-top: 15px;">
-        <button class="btn btn-primary" id="uploadBtn" disabled>
+    <!-- Single Analyze Button -->
+    <div class="analyze-section">
+        <button class="btn btn-primary" id="analyzeBtn" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.39 0 4.56.94 6.16 2.46"/>
+            </svg>
             Analyze Audio
         </button>
-    </div>
-</div>
-
-<!-- Recording Section -->
-<div class="card">
-    <h2 class="card-title">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="23"/>
-            <line x1="8" y1="23" x2="16" y2="23"/>
-        </svg>
-        Record Audio
-    </h2>
-    
-    <div class="recording-controls">
-        <button class="record-btn" id="recordBtn" title="Start Recording">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="record-icon">
-                <circle cx="12" cy="12" r="8"/>
-            </svg>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="stop-icon" style="display: none;">
-                <rect x="6" y="6" width="12" height="12" rx="2"/>
-            </svg>
-        </button>
-    </div>
-    
-    <div id="recordingStatus" style="text-align: center; color: var(--text-secondary);">
-        Click the record button to start
-    </div>
-    
-    <div style="text-align: center; margin-top: 20px; display: none;" id="analyzeRecordingContainer">
-        <button class="btn btn-primary" id="analyzeRecordingBtn">
-            Analyze Recording
-        </button>
+        <div class="analyze-hint" id="analyzeHint">
+            Upload a file or record audio to analyze
+        </div>
     </div>
 </div>
 
@@ -218,36 +240,43 @@
         
         <!-- Advanced Audio Metrics -->
         <div class="advanced-metrics" id="advancedMetrics">
-            <h3 class="metrics-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            <div class="metrics-header" id="metricsToggle">
+                <h3 class="metrics-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    Advanced Audio Metrics
+                </h3>
+                <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
                 </svg>
-                Advanced Audio Metrics
-            </h3>
-            <div class="advanced-metrics-grid">
-                <div class="adv-metric">
-                    <span class="adv-metric-label">Peak Amplitude</span>
-                    <span class="adv-metric-value" id="peakAmplitude">-</span>
-                </div>
-                <div class="adv-metric">
-                    <span class="adv-metric-label">RMS Level</span>
-                    <span class="adv-metric-value" id="rmsLevel">-</span>
-                </div>
-                <div class="adv-metric">
-                    <span class="adv-metric-label">Dynamic Range</span>
-                    <span class="adv-metric-value" id="dynamicRange">-</span>
-                </div>
-                <div class="adv-metric">
-                    <span class="adv-metric-label">Zero Crossings</span>
-                    <span class="adv-metric-value" id="zeroCrossings">-</span>
-                </div>
-                <div class="adv-metric">
-                    <span class="adv-metric-label">Spectral Centroid</span>
-                    <span class="adv-metric-value" id="spectralCentroid">-</span>
-                </div>
-                <div class="adv-metric">
-                    <span class="adv-metric-label">Noise Floor</span>
-                    <span class="adv-metric-value" id="noiseFloor">-</span>
+            </div>
+            <div class="metrics-content" id="metricsContent">
+                <div class="advanced-metrics-grid">
+                    <div class="adv-metric">
+                        <span class="adv-metric-label">Peak Amplitude</span>
+                        <span class="adv-metric-value" id="peakAmplitude">-</span>
+                    </div>
+                    <div class="adv-metric">
+                        <span class="adv-metric-label">RMS Level</span>
+                        <span class="adv-metric-value" id="rmsLevel">-</span>
+                    </div>
+                    <div class="adv-metric">
+                        <span class="adv-metric-label">Dynamic Range</span>
+                        <span class="adv-metric-value" id="dynamicRange">-</span>
+                    </div>
+                    <div class="adv-metric">
+                        <span class="adv-metric-label">Zero Crossings</span>
+                        <span class="adv-metric-value" id="zeroCrossings">-</span>
+                    </div>
+                    <div class="adv-metric">
+                        <span class="adv-metric-label">Spectral Centroid</span>
+                        <span class="adv-metric-value" id="spectralCentroid">-</span>
+                    </div>
+                    <div class="adv-metric">
+                        <span class="adv-metric-label">Noise Floor</span>
+                        <span class="adv-metric-value" id="noiseFloor">-</span>
+                    </div>
                 </div>
             </div>
         </div>
