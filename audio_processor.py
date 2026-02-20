@@ -8,6 +8,7 @@ for the prediction pipeline.
 import numpy as np
 import librosa
 import soundfile as sf
+import gc
 from pathlib import Path
 from typing import Tuple, Optional, Dict
 import config
@@ -198,6 +199,10 @@ class AudioProcessor:
         
         # Add batch dimension for model input
         features = np.expand_dims(features, axis=0)
+        
+        # Clean up to free memory
+        del audio
+        gc.collect()
         
         return features
     

@@ -3,11 +3,23 @@ Flask Application for Deepfake Audio Detection
 with routes for audio upload, prediction, transcription, and chatbot.
 """
 
-# Set TensorFlow environment variables BEFORE any imports
 import os
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+import gc
+
+# Memory optimization settings - must be set before importing TensorFlow
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU
+os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
+os.environ["TF_GPU_THREAD_MODE"] = "gpu_private"
+
+# Limit TensorFlow memory usage
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["KMP_AFFINITY"] = "granularity=fine,verbose,compact,1,0"
+os.environ["KMP_BLOCKTIME"] = "0"
+
+# Set memory allocator for better memory management
+os.environ["MALLOC_TRIM_THRESHOLD_"] = "100000"
+os.environ["MALLOC_MMAP_THRESHOLD_"] = "100000"
 
 from flask import Flask, render_template, request, jsonify, session
 from werkzeug.utils import secure_filename
@@ -21,10 +33,6 @@ from transcriber import Transcriber
 from chatbot import Chatbot
 import config
 
-print("=" * 60)
-print("EchoShield - Starting Application")
-print("=" * 60)
-
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
@@ -34,29 +42,32 @@ app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
 # Ensure upload directory exists
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
-# Preload backend components (model loads here, before accepting requests)
-print("Loading components...")
+# Preload all components at startup (before first request)
+print("Loading EchoShield components...")
 audio_processor = AudioProcessor()
-print("✓ Audio processor ready")
-
-print("Loading BiLSTM model...")
 prediction_engine = PredictionEngine()
-print(f"✓ Model loaded from: {config.MODEL_PATH}")
-
 transcriber = Transcriber()
-print("✓ Transcriber ready")
-print("=" * 60)
-print("Application ready - model preloaded!")
-print("=" * 60)
+print("✓ All components loaded and ready")
 
-# Store chatbot instances per session
+# Store chatbot instances per session (with limit to prevent memory leaks)
 chatbots = {}
+MAX_CHATBOT_SESSIONS = 100  # Limit concurrent chatbot sessions
 
 
 def allowed_file(filename):
     """Check if file extension is allowed."""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in config.ALLOWED_EXTENSIONS
+
+
+def cleanup_old_chatbots():
+    """Remove oldest chatbot sessions if limit is exceeded."""
+    if len(chatbots) > MAX_CHATBOT_SESSIONS:
+        # Remove oldest 20% of sessions
+        sessions_to_remove = list(chatbots.keys())[:MAX_CHATBOT_SESSIONS // 5]
+        for session_id in sessions_to_remove:
+            del chatbots[session_id]
+        gc.collect()
 
 
 def get_chatbot():
@@ -69,6 +80,8 @@ def get_chatbot():
     
     if session_id not in chatbots:
         try:
+            # Clean up old sessions before creating new one
+            cleanup_old_chatbots()
             chatbots[session_id] = Chatbot()
         except ValueError:
             # API key not configured
@@ -300,9 +313,15 @@ def predict():
             })
         
         finally:
-            # Clean up uploaded file
+            # Clean up uploaded file and free memory
             if os.path.exists(filepath):
                 os.remove(filepath)
+            
+            # Free memory
+            del features, prediction, audio_metrics
+            if 'transcript' in locals():
+                del transcript
+            gc.collect()
     
     except Exception as e:
         return jsonify({
@@ -472,21 +491,21 @@ def internal_error(error):
         'error': 'Internal server error. Please try again.'
     }), 500
 
-# Development server (only used when running directly with python app.py)
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 5000))
+# For Local Host
+# if __name__ == '__main__':
 #     app.run(
-#         host="0.0.0.0",
-#         port=port,
-#         debug=config.FLASK_DEBUG
+#         debug=config.FLASK_DEBUG,
+#         host='0.0.0.0',
+#         port=5000
 #     )
+
 # For Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(
         host="0.0.0.0",   # THIS IS THE KEY FIX
         port=port,
-        debug=config.FLASK_DEBUG
+        debug=False
     )
 
 

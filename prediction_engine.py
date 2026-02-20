@@ -8,6 +8,7 @@ Requirements: 2.5, 3.5
 """
 
 import numpy as np
+import gc
 from keras.models import load_model
 from typing import Dict
 import config
@@ -32,10 +33,13 @@ class PredictionEngine:
         self.model_path = model_path or config.MODEL_PATH
         self.model = self._load_model(self.model_path)
         self.class_labels = {0: 'real', 1: 'fake'}
+        
+        # Force garbage collection after model loading
+        gc.collect()
     
     def _load_model(self, model_path: str):
         """
-        Load the trained Keras model from file.
+        Load the trained Keras model from file with memory optimization.
         
         Args:
             model_path: Path to the model file
@@ -48,6 +52,7 @@ class PredictionEngine:
             RuntimeError: If model loading fails
         """
         import os
+        import tensorflow as tf
         
         if not os.path.exists(model_path):
             raise FileNotFoundError(
@@ -56,7 +61,21 @@ class PredictionEngine:
             )
         
         try:
-            model = load_model(model_path)
+            # Configure TensorFlow for memory efficiency
+            tf.config.set_soft_device_placement(True)
+            
+            # Disable eager execution for lower memory usage
+            tf.compat.v1.disable_eager_execution()
+            
+            model = load_model(model_path, compile=False)
+            
+            # Recompile with memory-efficient settings
+            model.compile(
+                optimizer='adam',
+                loss='sparse_categorical_crossentropy',
+                metrics=['accuracy']
+            )
+            
             return model
         except Exception as e:
             raise RuntimeError(f"Failed to load model: {str(e)}")
@@ -113,6 +132,10 @@ class PredictionEngine:
                     'fake': float(probabilities[1])
                 }
             }
+            
+            # Clean up to free memory
+            del features, predictions, probabilities
+            gc.collect()
             
             return result
             

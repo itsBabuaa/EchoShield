@@ -15,25 +15,13 @@ A Flask-based web application that detects deepfake audio using a BiLSTM (Bidire
 
 ## Installation
 
-### Docker (Recommended)
-
-```bash
-docker-compose up -d
-```
-
-Access at: http://localhost:5000
-
-See [DOCKER.md](DOCKER.md) for more details.
-
-### Local Installation
-
-#### Prerequisites
+### Prerequisites
 
 - Python 3.8 or higher
 - pip package manager
 - Modern web browser (Chrome, Firefox, Safari, Edge) for recording feature
 
-#### Setup
+### Setup
 
 1. **Clone or download the repository**
 
