@@ -17,8 +17,12 @@ from chatbot import Chatbot
 import config
 
 # Reduce TensorFlow overhead
-# os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+print("=" * 60)
+print("EchoShield - Starting Application")
+print("=" * 60)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -29,10 +33,20 @@ app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
 # Ensure upload directory exists
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
-# Initialize backend components
+# Preload backend components (model loads here, before accepting requests)
+print("Loading components...")
 audio_processor = AudioProcessor()
+print("✓ Audio processor ready")
+
+print("Loading BiLSTM model...")
 prediction_engine = PredictionEngine()
+print(f"✓ Model loaded from: {config.MODEL_PATH}")
+
 transcriber = Transcriber()
+print("✓ Transcriber ready")
+print("=" * 60)
+print("Application ready - model preloaded!")
+print("=" * 60)
 
 # Store chatbot instances per session
 chatbots = {}
@@ -457,22 +471,15 @@ def internal_error(error):
         'error': 'Internal server error. Please try again.'
     }), 500
 
-# For Local Host
-# if __name__ == '__main__':
-#     app.run(
-#         debug=config.FLASK_DEBUG,
-#         host='0.0.0.0',
-#         port=5000
-#     )
-
-# For Render
+# Development server (only used when running directly with python app.py)
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    port = int(os.environ.get("PORT", 5000))
     app.run(
-        host="0.0.0.0",   # THIS IS THE KEY FIX
+        host="0.0.0.0",
         port=port,
-        debug=False
+        debug=config.FLASK_DEBUG
     )
+
 
 
 

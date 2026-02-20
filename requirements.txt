@@ -1,6 +1,9 @@
 # Flask web framework
 flask>=2.3.0
 
+# Production WSGI server
+gunicorn>=21.2.0
+
 # Deep learning
 tensorflow>=2.13.0
 keras>=2.13.0

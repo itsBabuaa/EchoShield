@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment files
+.env
+
+# Uploads and training data
+uploads/*
+scenefake/
+
+# Git
+.git/
