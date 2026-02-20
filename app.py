@@ -33,6 +33,10 @@ from transcriber import Transcriber
 from chatbot import Chatbot
 import config
 
+# Reduce TensorFlow overhead
+# os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
@@ -473,7 +477,7 @@ def request_entity_too_large(error):
     """Handle file too large error."""
     return jsonify({
         'success': False,
-        'error': 'File size exceeds maximum limit (30MB).'
+        'error': 'File size exceeds maximum limit (50MB).'
     }), 413
 
 
@@ -507,7 +511,6 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
-
 
 
 
