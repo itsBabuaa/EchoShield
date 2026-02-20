@@ -3,9 +3,14 @@ Flask Application for Deepfake Audio Detection
 with routes for audio upload, prediction, transcription, and chatbot.
 """
 
+# Set TensorFlow environment variables BEFORE any imports
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 from flask import Flask, render_template, request, jsonify, session
 from werkzeug.utils import secure_filename
-import os
 from pathlib import Path
 import uuid
 
@@ -15,10 +20,6 @@ from prediction_engine import PredictionEngine
 from transcriber import Transcriber
 from chatbot import Chatbot
 import config
-
-# Reduce TensorFlow overhead
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 print("=" * 60)
 print("EchoShield - Starting Application")
