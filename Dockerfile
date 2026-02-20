@@ -15,14 +15,14 @@ COPY . .
 
 RUN mkdir -p uploads models
 
-ENV PORT=5000
+ENV PORT=10000
 ENV PYTHONUNBUFFERED=1
 ENV TF_CPP_MIN_LOG_LEVEL=3
 ENV CUDA_VISIBLE_DEVICES=-1
 ENV TF_ENABLE_ONEDNN_OPTS=0
 
-EXPOSE 5000
+EXPOSE 10000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "1", "--timeout", "180", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--workers", "1", "--threads", "1", "--timeout", "180", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
 
 

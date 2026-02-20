@@ -473,14 +473,21 @@ def internal_error(error):
     }), 500
 
 # Development server (only used when running directly with python app.py)
+# if __name__ == "__main__":
+#     port = int(os.environ.get("PORT", 5000))
+#     app.run(
+#         host="0.0.0.0",
+#         port=port,
+#         debug=config.FLASK_DEBUG
+#     )
+# For Render
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 10000))
     app.run(
-        host="0.0.0.0",
+        host="0.0.0.0",   # THIS IS THE KEY FIX
         port=port,
         debug=config.FLASK_DEBUG
     )
-
 
 
 
