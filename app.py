@@ -3,26 +3,9 @@ Flask Application for Deepfake Audio Detection
 with routes for audio upload, prediction, transcription, and chatbot.
 """
 
-import os
-import gc
-
-# Memory optimization settings - must be set before importing TensorFlow
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU
-os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
-os.environ["TF_GPU_THREAD_MODE"] = "gpu_private"
-
-# Limit TensorFlow memory usage
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-os.environ["KMP_AFFINITY"] = "granularity=fine,verbose,compact,1,0"
-os.environ["KMP_BLOCKTIME"] = "0"
-
-# Set memory allocator for better memory management
-os.environ["MALLOC_TRIM_THRESHOLD_"] = "100000"
-os.environ["MALLOC_MMAP_THRESHOLD_"] = "100000"
-
 from flask import Flask, render_template, request, jsonify, session
 from werkzeug.utils import secure_filename
+import os
 from pathlib import Path
 import uuid
 
@@ -46,32 +29,19 @@ app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
 # Ensure upload directory exists
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
-# Preload all components at startup (before first request)
-print("Loading EchoShield components...")
+# Initialize backend components
 audio_processor = AudioProcessor()
 prediction_engine = PredictionEngine()
 transcriber = Transcriber()
-print("✓ All components loaded and ready")
 
-# Store chatbot instances per session (with limit to prevent memory leaks)
+# Store chatbot instances per session
 chatbots = {}
-MAX_CHATBOT_SESSIONS = 100  # Limit concurrent chatbot sessions
 
 
 def allowed_file(filename):
     """Check if file extension is allowed."""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in config.ALLOWED_EXTENSIONS
-
-
-def cleanup_old_chatbots():
-    """Remove oldest chatbot sessions if limit is exceeded."""
-    if len(chatbots) > MAX_CHATBOT_SESSIONS:
-        # Remove oldest 20% of sessions
-        sessions_to_remove = list(chatbots.keys())[:MAX_CHATBOT_SESSIONS // 5]
-        for session_id in sessions_to_remove:
-            del chatbots[session_id]
-        gc.collect()
 
 
 def get_chatbot():
@@ -84,8 +54,6 @@ def get_chatbot():
     
     if session_id not in chatbots:
         try:
-            # Clean up old sessions before creating new one
-            cleanup_old_chatbots()
             chatbots[session_id] = Chatbot()
         except ValueError:
             # API key not configured
@@ -317,15 +285,9 @@ def predict():
             })
         
         finally:
-            # Clean up uploaded file and free memory
+            # Clean up uploaded file
             if os.path.exists(filepath):
                 os.remove(filepath)
-            
-            # Free memory
-            del features, prediction, audio_metrics
-            if 'transcript' in locals():
-                del transcript
-            gc.collect()
     
     except Exception as e:
         return jsonify({
@@ -477,7 +439,7 @@ def request_entity_too_large(error):
     """Handle file too large error."""
     return jsonify({
         'success': False,
-        'error': 'File size exceeds maximum limit (50MB).'
+        'error': 'File size exceeds maximum limit (30MB).'
     }), 413
 
 
@@ -511,6 +473,7 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+
 
 
 
