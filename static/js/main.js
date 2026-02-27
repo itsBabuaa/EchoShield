@@ -348,6 +348,9 @@ function displayResults(prediction, transcript, audioFile) {
     // Show results
     resultsContainer.classList.add('show');
     
+    // Show forensic report card
+    showForensicReportCard();
+    
     // Scroll to results
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -1069,3 +1072,189 @@ document.addEventListener('keydown', (e) => {
             break;
     }
 });
+
+// ============================================================================
+// Forensic Report
+// ============================================================================
+
+const forensicReportCard = document.getElementById('forensicReportCard');
+const generateReportBtn = document.getElementById('generateReportBtn');
+const downloadReportBtn = document.getElementById('downloadReportBtn');
+const reportContent = document.getElementById('reportContent');
+
+// Show forensic report card after analysis
+function showForensicReportCard() {
+    if (forensicReportCard) {
+        forensicReportCard.style.display = 'block';
+        // Reset report content
+        if (reportContent) {
+            reportContent.style.display = 'none';
+        }
+    }
+}
+
+// Generate forensic report
+if (generateReportBtn) {
+    generateReportBtn.addEventListener('click', async () => {
+        try {
+            // Disable button and show loading
+            generateReportBtn.disabled = true;
+            generateReportBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px; animation: spin 1s linear infinite;">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                Generating...
+            `;
+            
+            const response = await fetch('/generate-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                displayForensicReport(data.report);
+                showToast('Forensic report generated successfully', 'success');
+            } else {
+                showToast(data.error || 'Failed to generate report', 'error');
+            }
+        } catch (error) {
+            console.error('Error generating report:', error);
+            showToast('Failed to generate report', 'error');
+        } finally {
+            // Re-enable button
+            generateReportBtn.disabled = false;
+            generateReportBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Generate Report
+            `;
+        }
+    });
+}
+
+// Display forensic report
+function displayForensicReport(report) {
+    if (!reportContent) return;
+    
+    // Show report content
+    reportContent.style.display = 'block';
+    
+    // Populate metadata
+    document.getElementById('reportId').textContent = report.metadata.report_id;
+    document.getElementById('reportGenerated').textContent = report.metadata.generated_at;
+    document.getElementById('reportTool').textContent = report.metadata.analysis_tool;
+    document.getElementById('reportModel').textContent = report.metadata.model;
+    
+    // Populate file information
+    document.getElementById('reportFilename').textContent = report.file_information.filename;
+    document.getElementById('reportHash').textContent = report.file_information.file_hash_sha256;
+    document.getElementById('reportFileSize').textContent = report.file_information.file_size;
+    document.getElementById('reportDuration').textContent = report.file_information.duration;
+    
+    // Populate analysis results
+    const authValue = document.getElementById('reportAuthValue');
+    authValue.textContent = report.analysis_results.authenticity_assessment;
+    
+    const reportAuthenticity = document.getElementById('reportAuthenticity');
+    if (report.analysis_results.authenticity_assessment === 'AUTHENTIC') {
+        reportAuthenticity.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+        reportAuthenticity.style.borderColor = '#28a745';
+        authValue.style.color = '#28a745';
+    } else {
+        reportAuthenticity.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
+        reportAuthenticity.style.borderColor = '#dc3545';
+        authValue.style.color = '#dc3545';
+    }
+    
+    document.getElementById('reportConfidence').textContent = report.analysis_results.confidence_score;
+    document.getElementById('reportRisk').textContent = report.analysis_results.risk_level;
+    document.getElementById('reportRealProb').textContent = report.analysis_results.real_probability;
+    document.getElementById('reportFakeProb').textContent = report.analysis_results.fake_probability;
+    
+    // Populate technical analysis
+    document.getElementById('reportPeakAmp').textContent = report.technical_analysis.peak_amplitude;
+    document.getElementById('reportRMS').textContent = report.technical_analysis.rms_level;
+    document.getElementById('reportDynRange').textContent = report.technical_analysis.dynamic_range;
+    document.getElementById('reportZCR').textContent = report.technical_analysis.zero_crossing_rate;
+    document.getElementById('reportSpectral').textContent = report.technical_analysis.spectral_centroid;
+    document.getElementById('reportNoise').textContent = report.technical_analysis.noise_floor;
+    
+    // Populate indicators
+    const indicatorsList = document.getElementById('reportIndicators');
+    indicatorsList.innerHTML = '';
+    report.indicators.forEach(indicator => {
+        const li = document.createElement('li');
+        li.textContent = indicator;
+        indicatorsList.appendChild(li);
+    });
+    
+    // Populate recommendations
+    const recommendationsList = document.getElementById('reportRecommendations');
+    recommendationsList.innerHTML = '';
+    report.recommendations.forEach(recommendation => {
+        const li = document.createElement('li');
+        li.textContent = recommendation;
+        recommendationsList.appendChild(li);
+    });
+    
+    // Populate disclaimer
+    document.getElementById('reportDisclaimer').textContent = report.disclaimer;
+    
+    // Scroll to report
+    reportContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Download forensic report as PDF
+if (downloadReportBtn) {
+    downloadReportBtn.addEventListener('click', async () => {
+        try {
+            // Disable button and show loading
+            downloadReportBtn.disabled = true;
+            downloadReportBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px; animation: spin 1s linear infinite;">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                Downloading...
+            `;
+            
+            const response = await fetch('/download-report');
+            
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `forensic_report_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showToast('Report downloaded successfully', 'success');
+            } else {
+                const data = await response.json();
+                showToast(data.error || 'Failed to download report', 'error');
+            }
+        } catch (error) {
+            console.error('Error downloading report:', error);
+            showToast('Failed to download report', 'error');
+        } finally {
+            // Re-enable button
+            downloadReportBtn.disabled = false;
+            downloadReportBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download PDF
+            `;
+        }
+    });
+}

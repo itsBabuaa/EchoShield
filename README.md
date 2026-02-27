@@ -4,14 +4,14 @@ A Flask-based web application that detects deepfake audio using a BiLSTM (Bidire
 
 ## Features
 
-- 🎵 **Audio Upload**: Support for WAV, MP3, and FLAC formats
-- 🎤 **Live Recording**: Record audio directly in the browser
-- 🤖 **BiLSTM Model**: Deep learning model for accurate detection
-- 📊 **Visual Results**: Animated confidence gauge and color-coded results
-- 📝 **Transcription**: Automatic speech-to-text conversion
-- 💬 **AI Chatbot**: Interactive assistant powered by Groq API
-- 🎨 **Futuristic UI**: Dark theme with gradients and animations
-- 📱 **Responsive Design**: Works on desktop and mobile devices
+- **Audio Upload**: Support for WAV, MP3, and FLAC formats
+- **Live Recording**: Record audio directly in the browser
+- **BiLSTM Model**: Deep learning model for accurate detection
+- **Visual Results**: Animated confidence gauge and color-coded results
+- **Transcription**: Automatic speech-to-text conversion
+- **AI Chatbot**: Interactive assistant powered by Groq API
+- **Futuristic UI**: Dark theme with gradients and animations
+- **Responsive Design**: Works on desktop and mobile devices
 
 ## Installation
 
@@ -43,8 +43,9 @@ A Flask-based web application that detects deepfake audio using a BiLSTM (Bidire
    N_MFCC=40
    MAX_AUDIO_LENGTH=300
 
-   # Groq API (Optional - for chatbot)
+   # API Keys
    GROQ_API_KEY=your_groq_api_key_here
+   DEEPGRAM_API_KEY=your_deepgram_api_key_here
 
    # Flask Configuration
    FLASK_DEBUG=False
@@ -85,7 +86,7 @@ A Flask-based web application that detects deepfake audio using a BiLSTM (Bidire
 3. View the results with confidence scores and transcript
 
 #### Record Audio
-1. Click the record button (⏺️)
+1. Click the record button
 2. Allow microphone access when prompted
 3. Click "Stop Recording" when done
 4. Click "Analyze Recording"
@@ -175,6 +176,10 @@ All configuration is managed through environment variables in the `.env` file:
 - Set `GROQ_API_KEY` in your `.env` file
 - Get an API key from [Groq](https://console.groq.com/)
 
+### Transcription not working
+- Set `DEEPGRAM_API_KEY` in your `.env` file
+- Get an API key from [Deepgram](https://console.deepgram.com/)
+
 ### Microphone access denied
 - Check browser permissions for microphone access
 - Use HTTPS in production (required for microphone API)
@@ -188,7 +193,7 @@ All configuration is managed through environment variables in the `.env` file:
 - **Backend**: Flask, TensorFlow/Keras, Librosa
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
 - **ML Model**: BiLSTM with MFCC features
-- **Speech Recognition**: Google Speech API
+- **Speech Recognition**: Deepgram API
 - **AI Chatbot**: Groq API
 
 ## Acknowledgments

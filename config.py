@@ -14,8 +14,9 @@ SAMPLE_RATE = int(os.getenv('SAMPLE_RATE', 16000))
 N_MFCC = int(os.getenv('N_MFCC', 40))
 MAX_AUDIO_LENGTH = int(os.getenv('MAX_AUDIO_LENGTH', 300))
 
-# Groq API
+# API Keys
 GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
+DEEPGRAM_API_KEY = os.getenv('DEEPGRAM_API_KEY', '')
 
 # Flask Configuration
 FLASK_DEBUG = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'

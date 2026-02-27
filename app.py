@@ -3,17 +3,19 @@ Flask Application for Deepfake Audio Detection
 with routes for audio upload, prediction, transcription, and chatbot.
 """
 
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_file
 from werkzeug.utils import secure_filename
 import os
 from pathlib import Path
 import uuid
+import hashlib
 
 # Import backend components
 from audio_processor import AudioProcessor
 from prediction_engine import PredictionEngine
 from transcriber import Transcriber
 from chatbot import Chatbot
+from forensic_report import ForensicReportGenerator
 import config
 
 # Reduce TensorFlow overhead
@@ -33,6 +35,7 @@ os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 audio_processor = AudioProcessor()
 prediction_engine = PredictionEngine()
 transcriber = Transcriber()
+forensic_generator = ForensicReportGenerator()
 
 # Store chatbot instances per session
 chatbots = {}
@@ -252,6 +255,14 @@ def predict():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         file.save(filepath)
         
+        # Calculate file hash for forensic report
+        file_hash = None
+        try:
+            with open(filepath, 'rb') as f:
+                file_hash = hashlib.sha256(f.read()).hexdigest()
+        except Exception:
+            pass
+        
         try:
             # Process audio and get prediction
             features = audio_processor.preprocess_for_prediction(filepath)
@@ -267,10 +278,12 @@ def predict():
                 print(f"Transcription error: {trans_error}")
                 transcript = "[Transcription unavailable]"
             
-            # Store results in session for chatbot
+            # Store results in session for chatbot and forensic report
             session['last_prediction'] = prediction
             session['last_transcript'] = transcript
             session['last_audio_metrics'] = audio_metrics
+            session['last_filename'] = filename
+            session['last_file_hash'] = file_hash
             
             # Set chatbot context if available
             chatbot = get_chatbot()
@@ -426,6 +439,91 @@ def clear_chat():
         return jsonify({
             'success': True
         })
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/generate-report', methods=['POST'])
+def generate_report():
+    """
+    Generate forensic report for the last analyzed audio.
+    
+    Returns:
+        JSON response with forensic report data
+    """
+    try:
+        # Check if analysis results exist in session
+        if 'last_prediction' not in session or 'last_transcript' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'No analysis results found. Please analyze an audio file first.'
+            }), 400
+        
+        prediction = session['last_prediction']
+        transcript = session['last_transcript']
+        audio_metrics = session.get('last_audio_metrics', {})
+        filename = session.get('last_filename', 'unknown.wav')
+        file_hash = session.get('last_file_hash', None)
+        
+        # Generate forensic report
+        report = forensic_generator.generate_report(
+            prediction=prediction,
+            transcript=transcript,
+            audio_metrics=audio_metrics,
+            filename=filename,
+            file_hash=file_hash
+        )
+        
+        # Store report in session for PDF generation
+        session['last_report'] = report
+        
+        return jsonify({
+            'success': True,
+            'report': report
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/download-report', methods=['GET'])
+def download_report():
+    """
+    Download forensic report as PDF.
+    
+    Returns:
+        PDF file download
+    """
+    try:
+        # Check if report exists in session
+        if 'last_report' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'No report found. Please generate a report first.'
+            }), 400
+        
+        report = session['last_report']
+        
+        # Generate PDF
+        pdf_buffer = forensic_generator.generate_pdf(report)
+        
+        # Generate filename
+        report_id = report['metadata']['report_id']
+        filename = f"forensic_report_{report_id}.pdf"
+        
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=filename
+        )
     
     except Exception as e:
         return jsonify({

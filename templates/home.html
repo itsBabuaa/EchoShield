@@ -3,117 +3,298 @@
 {% block title %}Home - EchoShield{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
+<!-- Hero Section with Animated Text -->
 <section class="hero-section">
     <div class="hero-content">
-        <h1 class="hero-title">EchoShield</h1>
-        <p class="hero-subtitle">Protect yourself from AI-generated voice fraud with advanced neural network technology</p>
-        <a href="/detect" class="btn-primary btn-large">
+        <h1 class="hero-title">
+            <span class="word">Echo</span><span class="word">Shield</span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="rotating-text" id="rotatingText">Your voice is unique. Keep it that way.</span><span class="cursor">|</span>
+        </p>
+        <p class="hero-description">
+            Advanced AI detection to protect you from voice cloning and audio deepfakes
+        </p>
+        <a href="/detect" class="btn-primary btn-large pulse-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.39 0 4.56.94 6.16 2.46"/>
+            </svg>
             Detect Deepfake Audio
         </a>
     </div>
     <div class="hero-animation">
-        <div class="sound-wave"></div>
-        <div class="sound-wave"></div>
-        <div class="sound-wave"></div>
+        <div class="sound-wave wave-1"></div>
+        <div class="sound-wave wave-2"></div>
+        <div class="sound-wave wave-3"></div>
+        <div class="sound-wave wave-4"></div>
+        <div class="sound-wave wave-5"></div>
     </div>
 </section>
 
-<!-- What is Deepfake Section -->
-<section class="info-section">
+<!-- Story Section: The Problem -->
+<section class="story-section dark-section">
     <div class="container">
-        <h2 class="section-title">What are Deepfakes?</h2>
-        <div class="info-grid">
-            <div class="info-card">
-                <div class="info-icon">🎭</div>
-                <h3>Synthetic Media</h3>
-                <p>Deepfakes are AI-generated audio or video content that convincingly mimics real people's voices, faces, and mannerisms using deep learning algorithms.</p>
+        <div class="story-header fade-in-up">
+            <span class="story-label">The Problem</span>
+            <h2 class="section-title glitch-text" data-text="Your Voice Can Be Stolen">
+                Your Voice Can Be Stolen
+            </h2>
+        </div>
+        <div class="story-content">
+            <div class="story-text fade-in-left">
+                <p class="story-paragraph">
+                    Imagine receiving a call from your CEO asking you to transfer $243k urgently. 
+                    The voice sounds exactly right the tone, the accent, even the slight hesitation before important words.
+                </p>
+                <p class="story-paragraph">
+                    You comply. Minutes later, you discover it wasn't your CEO at all. 
+                    It was an AI-generated deepfake voice, and the money is gone.
+                </p>
+                <p class="story-highlight">
+                    <strong>This isn't science fiction. This happened in 2019, and it's happening more every day.</strong>
+                </p>
             </div>
-            <div class="info-card">
-                <div class="info-icon">🤖</div>
-                <h3>AI Technology</h3>
-                <p>Created using neural networks trained on hours of real audio/video data, deepfakes can replicate anyone's voice with startling accuracy.</p>
-            </div>
-            <div class="info-card">
-                <div class="info-icon">⚠️</div>
-                <h3>Growing Threat</h3>
-                <p>As technology advances, deepfakes are becoming harder to detect, making verification tools essential for digital security.</p>
+            <div class="story-visual fade-in-right">
+                <div class="attack-flow-simple">
+                    <div class="flow-title">How Deepfake Attacks Work</div>
+                    
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <!--div class="step-icon">🎤</div-->
+                            <div class="step-content">
+                                <h4>Voice Sample</h4>
+                                <p>3-10 seconds from social media</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">→</div>
+                        
+                        <div class="flow-step">
+                            <!--div class="step-icon">🧠</div-->
+                            <div class="step-content">
+                                <h4>AI Training</h4>
+                                <p>Neural network learns patterns</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">→</div>
+                        
+                        <div class="flow-step">
+                            <!--div class="step-icon">🔊</div-->
+                            <div class="step-content">
+                                <h4>Fake Voice</h4>
+                                <p>AI generates synthetic speech</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flow-arrow">→</div>
+                        
+                        <div class="flow-step danger">
+                            <div class="step-icon">⚠️</div>
+                            <div class="step-content">
+                                <h4>Attack</h4>
+                                <p>Fraudulent call made</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="attack-stats">
+                        <div class="attack-stat">
+                            <span class="stat-value count-up" data-target="500">0</span><span class="stat-value">%</span>
+                            <span class="stat-label">Increase in 2023</span>
+                        </div>
+                        <div class="attack-stat">
+                            <span class="stat-value">$</span><span class="stat-value count-up" data-target="280">0</span><span class="stat-value">K</span>
+                            <span class="stat-label">Average Loss</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Deepfake Audio Section -->
-<section class="audio-section">
+<!-- Story Section: How It Works -->
+<section class="story-section light-section">
     <div class="container">
-        <h2 class="section-title">Deepfake Audio: The Invisible Threat</h2>
-        <div class="content-split">
-            <div class="content-text">
-                <h3>How It Works</h3>
-                <p>Deepfake audio uses voice cloning technology to create synthetic speech that sounds identical to a real person. With just a few minutes of audio samples, AI can generate convincing fake recordings.</p>
-                
-                <h3>Common Uses</h3>
-                <ul class="feature-list">
-                    <li>Voice phishing (vishing) scams</li>
-                    <li>Impersonation fraud</li>
-                    <li>Fake news and misinformation</li>
-                    <li>Corporate espionage</li>
-                    <li>Political manipulation</li>
-                </ul>
+        <div class="story-header fade-in-up">
+            <span class="story-label">The Technology</span>
+            <h2 class="section-title">How Voice Cloning Works</h2>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item fade-in-up" data-delay="0">
+                <div class="timeline-marker">1</div>
+                <div class="timeline-content">
+                    <h3>Voice Collection</h3>
+                    <p>AI systems need just 3-10 seconds of your voice from social media, videos, or phone calls.</p>
+                </div>
             </div>
-            <div class="content-visual">
-                <div class="stat-box">
-                    <div class="stat-number">BiLSTM</div>
-                    <div class="stat-label">Neural Network</div>
+            <div class="timeline-item fade-in-up" data-delay="200">
+                <div class="timeline-marker">2</div>
+                <div class="timeline-content">
+                    <h3>Neural Network Training</h3>
+                    <p>Deep learning models analyze your voice patterns, pitch, tone, and speech characteristics.</p>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number">13K+</div>
-                    <div class="stat-label">Training Samples</div>
+            </div>
+            <div class="timeline-item fade-in-up" data-delay="400">
+                <div class="timeline-marker">3</div>
+                <div class="timeline-content">
+                    <h3>Voice Synthesis</h3>
+                    <p>The AI generates new speech in your voice, saying anything the attacker wants.</p>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number">&lt;5s</div>
-                    <div class="stat-label">Detection Time</div>
+            </div>
+            <div class="timeline-item fade-in-up" data-delay="600">
+                <div class="timeline-marker">4</div>
+                <div class="timeline-content">
+                    <h3>The Attack</h3>
+                    <p>Scammers use the cloned voice for fraud, impersonation, or spreading misinformation.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Harm Section -->
-<section class="harm-section">
+<!-- Real-World Impact -->
+<section class="impact-section">
     <div class="container">
-        <h2 class="section-title">The Real-World Impact</h2>
-        <div class="harm-grid">
-            <a href="https://www.forbes.com/sites/jessedamiani/2019/09/03/a-voice-deepfake-was-used-to-scam-a-ceo-out-of-243000/" target="_blank" class="harm-card">
-                <div class="harm-icon">💰</div>
-                <h3>Financial Fraud</h3>
-                <p>Criminals use deepfake audio to impersonate executives, requesting fraudulent wire transfers. In 2019, a UK company lost $243,000 to a deepfake voice scam.</p>
+        <div class="story-header fade-in-up">
+            <span class="story-label">Real Stories</span>
+            <h2 class="section-title">The Real-World Impact</h2>
+            <p class="section-subtitle">These aren't hypothetical scenarios they're real cases that have affected real people</p>
+        </div>
+        <div class="impact-grid">
+            <a href="https://www.wsj.com/articles/fraudsters-use-ai-to-mimic-ceos-voice-in-unusual-cybercrime-case-11567157402" target="_blank" class="impact-card fade-in-up" data-delay="0">
+                <div class="impact-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M16 8l-4 4-4-4"/>
+                        <path d="M12 12v8"/>
+                        <path d="M8 16h8"/>
+                    </svg>
+                </div>
+                <h3>The $243,000 CEO Voice Scam</h3>
+                <p>A UK energy company's CEO received a call from his German parent company's chief executive. The voice was perfect. He transferred the money. It was a deepfake that fooled him completely.</p>
+                <span class="impact-link">Read WSJ Report →</span>
             </a>
-            <a href="https://www.bbc.com/news/technology-59810383" target="_blank" class="harm-card">
-                <div class="harm-icon">🗳️</div>
-                <h3>Political Manipulation</h3>
-                <p>Fake audio of politicians can spread misinformation, influence elections, and damage reputations before verification is possible.</p>
+            <a href="https://www.ftc.gov/news-events/news/press-releases/2024/02/ftc-warns-consumers-about-new-ai-voice-cloning-scams" target="_blank" class="impact-card fade-in-up" data-delay="100">
+                <div class="impact-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        <path d="M8 3.13a4 4 0 0 0 0 7.75"/>
+                    </svg>
+                </div>
+                <h3>AI Voice Cloning Family Scams</h3>
+                <p>The FTC reports a surge in "grandparent scams" using AI voice cloning. Scammers clone voices from social media to create fake emergency calls from family members.</p>
+                <span class="impact-link">FTC Alert →</span>
             </a>
-            <a href="https://www.theguardian.com/technology/2023/mar/16/voice-cloning-ai-scams" target="_blank" class="harm-card">
-                <div class="harm-icon">👤</div>
-                <h3>Identity Theft</h3>
-                <p>Voice authentication systems can be bypassed, leading to unauthorized access to bank accounts, medical records, and personal data.</p>
+            <a href="https://www.reuters.com/technology/ai-voice-cloning-enters-2024-us-election-race-2024-01-22/" target="_blank" class="impact-card fade-in-up" data-delay="200">
+                <div class="impact-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 7l-3 3-3-3"/>
+                        <path d="M16 10v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4z"/>
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <path d="M8 21l4-7 4 7"/>
+                    </svg>
+                </div>
+                <h3>Election Deepfake Threats</h3>
+                <p>Reuters reports on AI voice cloning being used to create fake political statements and robocalls during the 2024 election cycle, threatening democratic processes.</p>
+                <span class="impact-link">Reuters Investigation →</span>
             </a>
-            <a href="https://www.wired.com/story/deepfake-detection-algorithms-can-be-defeated/" target="_blank" class="harm-card">
-                <div class="harm-icon">📰</div>
-                <h3>Misinformation</h3>
-                <p>Fake audio clips can go viral on social media, spreading false information and eroding trust in legitimate media sources.</p>
+            <a href="https://www.cnbc.com/2024/03/15/ai-voice-cloning-scams-are-on-the-rise-heres-how-to-protect-yourself.html" target="_blank" class="impact-card fade-in-up" data-delay="300">
+                <div class="impact-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13" rx="2"/>
+                        <path d="M16 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <path d="M7 21v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </div>
+                <h3>Banking & Financial Fraud</h3>
+                <p>CNBC investigates the rise of AI voice cloning in financial fraud, including cases where voice authentication systems have been bypassed by sophisticated deepfakes.</p>
+                <span class="impact-link">CNBC Report →</span>
             </a>
-            <a href="https://consumer.ftc.gov/consumer-alerts/2023/03/scammers-use-ai-enhance-their-family-emergency-schemes" target="_blank" class="harm-card">
-                <div class="harm-icon">👨‍👩‍👧</div>
-                <h3>Family Scams</h3>
-                <p>Scammers clone voices of family members to create fake emergency calls, tricking relatives into sending money for fabricated crises.</p>
+            <a href="https://www.bbc.com/news/technology-68252771" target="_blank" class="impact-card fade-in-up" data-delay="400">
+                <div class="impact-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <h3>Deepfake Audio Goes Viral</h3>
+                <p>BBC reports on how deepfake audio clips of celebrities and politicians spread rapidly on social media, reaching millions before being debunked by fact-checkers.</p>
+                <span class="impact-link">BBC Analysis →</span>
             </a>
-            <a href="https://www.csoonline.com/article/570001/deepfakes-what-they-are-and-how-to-spot-them.html" target="_blank" class="harm-card">
-                <div class="harm-icon">🏢</div>
-                <h3>Corporate Espionage</h3>
-                <p>Deepfake audio is used to impersonate executives in confidential calls, extracting sensitive business information and trade secrets.</p>
+            <a href="https://www.cybersecuritydive.com/news/deepfake-audio-corporate-fraud/704123/" target="_blank" class="impact-card fade-in-up" data-delay="500">
+                <div class="impact-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 21h18"/>
+                        <path d="M5 21V7l8-4v18"/>
+                        <path d="M19 21V11l-6-4"/>
+                        <path d="M9 9v1"/>
+                        <path d="M9 17v1"/>
+                        <path d="M14 13v1"/>
+                        <path d="M14 17v1"/>
+                    </svg>
+                </div>
+                <h3>Corporate Security Breaches</h3>
+                <p>Cybersecurity Dive covers cases where deepfake audio has been used to impersonate executives in confidential calls, leading to data breaches and corporate espionage.</p>
+                <span class="impact-link">Security Report →</span>
             </a>
+        </div>
+    </div>
+</section>
+
+<!-- Solution Section -->
+<section class="solution-section">
+    <div class="container">
+        <div class="story-header fade-in-up">
+            <span class="story-label">The Solution</span>
+            <h2 class="section-title">Fight AI with AI</h2>
+            <p class="section-subtitle">EchoShield uses advanced neural networks to detect what the human ear cannot</p>
+        </div>
+        <div class="solution-grid">
+            <div class="solution-card fade-in-up" data-delay="0">
+                <div class="solution-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V4.5A2.5 2.5 0 0 1 9.5 2z"/>
+                        <path d="M14.5 8.5a2.5 2.5 0 0 1 5 0v11a2.5 2.5 0 0 1-5 0v-11z"/>
+                        <path d="M3 12a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4z"/>
+                    </svg>
+                </div>
+                <h3>BiLSTM Neural Network</h3>
+                <p>Our bidirectional LSTM model analyzes audio patterns in both forward and backward directions, capturing subtle anomalies that indicate synthetic speech.</p>
+                <div class="solution-stat">93.8% Accuracy</div>
+            </div>
+            <div class="solution-card fade-in-up" data-delay="200">
+                <div class="solution-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"/>
+                        <path d="M6 15v3"/>
+                        <path d="M3 18v-3"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                </div>
+                <h3>MFCC Analysis</h3>
+                <p>We extract 40 Mel-frequency cepstral coefficients from your audio, analyzing the unique spectral characteristics that differentiate real from fake.</p>
+                <div class="solution-stat">40 Features</div>
+            </div>
+            <div class="solution-card fade-in-up" data-delay="400">
+                <div class="solution-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                </div>
+                <h3>Real-Time Detection</h3>
+                <p>Get results in under 5 seconds. Upload or record audio directly in your browser and receive instant analysis with confidence scores.</p>
+                <div class="solution-stat">&lt;5s Response</div>
+            </div>
         </div>
     </div>
 </section>
@@ -121,12 +302,164 @@
 <!-- CTA Section -->
 <section class="cta-section">
     <div class="container">
-        <h2>Protect Yourself Today</h2>
-        <p>Use our advanced AI-powered detection tool to verify audio authenticity</p>
-        <div class="cta-buttons">
-            <a href="/detect" class="btn-primary btn-large">Start Detection</a>
-            <a href="/learn-more" class="btn-secondary btn-large">Learn More</a>
+        <div class="cta-content fade-in-up">
+            <h2 class="cta-title">Your Voice. Your Identity. Protected.</h2>
+            <p class="cta-subtitle">Don't wait until it's too late. Verify audio authenticity now.</p>
+            <div class="cta-buttons">
+                <a href="/detect" class="btn-primary btn-large pulse-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    </svg>
+                    Start Detection Now
+                </a>
+                <a href="/learn-more" class="btn-secondary btn-large">
+                    Learn More About Deepfakes
+                </a>
+            </div>
         </div>
     </div>
 </section>
+
+<script>
+// Simplified animations - content visible by default
+document.addEventListener('DOMContentLoaded', function() {
+    // Typing/Deleting text effect
+    const rotatingText = document.getElementById('rotatingText');
+    if (rotatingText) {
+        const quotes = [
+            "Your voice is unique. Keep it that way.",
+            "Don't let AI steal your identity.",
+            "Verify before you trust."
+        ];
+        let currentIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let isPaused = false;
+        
+        function typeEffect() {
+            const currentQuote = quotes[currentIndex];
+            
+            if (isPaused) {
+                setTimeout(typeEffect, 2000); // Pause for 2 seconds
+                isPaused = false;
+                return;
+            }
+            
+            if (isDeleting) {
+                // Delete character
+                rotatingText.textContent = currentQuote.substring(0, charIndex - 1);
+                charIndex--;
+                
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    currentIndex = (currentIndex + 1) % quotes.length;
+                    setTimeout(typeEffect, 500); // Pause before typing next
+                    return;
+                }
+            } else {
+                // Type character
+                rotatingText.textContent = currentQuote.substring(0, charIndex + 1);
+                charIndex++;
+                
+                if (charIndex === currentQuote.length) {
+                    isDeleting = true;
+                    isPaused = true;
+                    setTimeout(typeEffect, 2000); // Pause when complete
+                    return;
+                }
+            }
+            
+            // Speed: faster when deleting, slower when typing
+            const speed = isDeleting ? 30 : 80;
+            setTimeout(typeEffect, speed);
+        }
+        
+        // Start the effect
+        typeEffect();
+    }
+    
+    // Intersection Observer for fade-in animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const delay = entry.target.dataset.delay || 0;
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, delay);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Count-up animation
+    function animateCount(element) {
+        const target = parseInt(element.dataset.target);
+        const duration = 2000;
+        const step = target / (duration / 16);
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                element.textContent = target;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current);
+            }
+        }, 16);
+    }
+
+    // Observe count-up elements
+    const countObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCount(entry.target);
+                countObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.count-up').forEach(el => {
+        countObserver.observe(el);
+    });
+
+    // Simple attack flow animation
+    const flowObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Simple fade-in for flow steps
+                const steps = entry.target.querySelectorAll('.flow-step');
+                steps.forEach((step, index) => {
+                    setTimeout(() => {
+                        step.style.opacity = '1';
+                        step.style.transform = 'translateY(0)';
+                    }, index * 200);
+                });
+                flowObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.attack-flow-simple').forEach(el => {
+        // Initially hide steps for animation
+        el.querySelectorAll('.flow-step').forEach(step => {
+            step.style.opacity = '0';
+            step.style.transform = 'translateY(20px)';
+            step.style.transition = 'all 0.5s ease';
+        });
+        flowObserver.observe(el);
+    });
+});
+</script>
 {% endblock %}
