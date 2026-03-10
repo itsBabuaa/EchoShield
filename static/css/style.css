@@ -882,6 +882,27 @@ header {
     align-self: flex-start;
 }
 
+.chat-message.assistant .chat-list {
+    margin: 4px 0;
+    padding-left: 18px;
+    list-style: disc;
+}
+
+.chat-message.assistant .chat-list li {
+    margin: 3px 0;
+    line-height: 1.4;
+}
+
+.chat-message.assistant .chat-para {
+    margin: 4px 0;
+    line-height: 1.4;
+}
+
+.chat-message.assistant strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
 .chat-input-area {
     padding: 12px;
     border-top: 1px solid var(--border-color);
@@ -4722,6 +4743,8 @@ img.loaded {
     font-size: 0.95rem;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 400;
+    word-break: break-all;
+    overflow-wrap: anywhere;
 }
 
 .report-highlight {
