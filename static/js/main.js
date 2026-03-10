@@ -1258,3 +1258,248 @@ if (downloadReportBtn) {
         }
     });
 }
+
+// ============================================================================
+// Image Preloading System
+// ============================================================================
+
+class ImagePreloader {
+    constructor() {
+        this.preloadedImages = new Map();
+        this.loadingPromises = new Map();
+        this.observer = null;
+        this.init();
+    }
+    
+    init() {
+        // Setup intersection observer for lazy loading
+        if ('IntersectionObserver' in window) {
+            this.observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.loadLazyImage(entry.target);
+                        this.observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '50px'
+            });
+        }
+        
+        // Preload critical images immediately
+        this.preloadCriticalImages();
+        
+        // Setup lazy loading for existing images
+        this.setupLazyLoading();
+    }
+    
+    preloadCriticalImages() {
+        const criticalImages = [
+            '/static/images/default-avatar.svg',
+            '/static/images/Sonali-Mathur.jpg',
+            '/static/images/Atharv.jpeg',
+            '/static/images/Ayush.jpeg',
+            '/static/images/Ansh.jpeg'
+        ];
+        
+        criticalImages.forEach(src => {
+            this.preloadImage(src, true);
+        });
+    }
+    
+    preloadImage(src, isCritical = false) {
+        // Return existing promise if already loading
+        if (this.loadingPromises.has(src)) {
+            return this.loadingPromises.get(src);
+        }
+        
+        // Return resolved promise if already loaded
+        if (this.preloadedImages.has(src)) {
+            return Promise.resolve(this.preloadedImages.get(src));
+        }
+        
+        const promise = new Promise((resolve, reject) => {
+            const img = new Image();
+            
+            img.onload = () => {
+                this.preloadedImages.set(src, img);
+                this.loadingPromises.delete(src);
+                console.log(`✓ Preloaded image: ${src}`);
+                resolve(img);
+            };
+            
+            img.onerror = (error) => {
+                this.loadingPromises.delete(src);
+                console.warn(`✗ Failed to preload image: ${src}`, error);
+                reject(error);
+            };
+            
+            // Set priority for critical images
+            if (isCritical && 'fetchPriority' in img) {
+                img.fetchPriority = 'high';
+            }
+            
+            img.src = src;
+        });
+        
+        this.loadingPromises.set(src, promise);
+        return promise;
+    }
+    
+    setupLazyLoading() {
+        // Find all images with data-src attribute
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        
+        if (this.observer) {
+            lazyImages.forEach(img => {
+                this.observer.observe(img);
+            });
+        } else {
+            // Fallback for browsers without IntersectionObserver
+            lazyImages.forEach(img => {
+                this.loadLazyImage(img);
+            });
+        }
+    }
+    
+    loadLazyImage(img) {
+        const src = img.dataset.src;
+        if (!src) return;
+        
+        // Add loading class
+        img.classList.add('loading');
+        
+        this.preloadImage(src).then(() => {
+            img.src = src;
+            img.classList.remove('loading', 'lazy');
+            img.classList.add('loaded');
+            
+            // Remove data-src to prevent reloading
+            delete img.dataset.src;
+        }).catch(() => {
+            img.classList.remove('loading');
+            img.classList.add('error');
+            
+            // Set fallback image if available
+            if (img.dataset.fallback) {
+                img.src = img.dataset.fallback;
+            }
+        });
+    }
+    
+    // Public method to preload additional images
+    preload(sources) {
+        const promises = sources.map(src => this.preloadImage(src));
+        return Promise.allSettled(promises);
+    }
+    
+    // Check if image is preloaded
+    isPreloaded(src) {
+        return this.preloadedImages.has(src);
+    }
+    
+    // Get preloaded image
+    getPreloaded(src) {
+        return this.preloadedImages.get(src);
+    }
+}
+
+// Initialize image preloader
+const imagePreloader = new ImagePreloader();
+
+// ============================================================================
+// Enhanced Image Loading for Team Photos
+// ============================================================================
+
+function enhanceTeamPhotos() {
+    const teamPhotos = document.querySelectorAll('.team-photo img');
+    
+    teamPhotos.forEach(img => {
+        // Add loading state
+        img.addEventListener('loadstart', function() {
+            this.parentElement.classList.add('loading');
+        });
+        
+        // Handle successful load
+        img.addEventListener('load', function() {
+            this.parentElement.classList.remove('loading');
+            this.parentElement.classList.add('loaded');
+            
+            // Fade in effect
+            this.style.opacity = '0';
+            this.style.transition = 'opacity 0.3s ease';
+            
+            // Use requestAnimationFrame for smooth animation
+            requestAnimationFrame(() => {
+                this.style.opacity = '1';
+            });
+        });
+        
+        // Handle load errors
+        img.addEventListener('error', function() {
+            this.parentElement.classList.remove('loading');
+            this.parentElement.classList.add('error');
+            
+            // Try fallback image
+            if (this.src !== '/static/images/default-avatar.svg') {
+                console.warn(`Failed to load ${this.src}, using fallback`);
+                this.src = '/static/images/default-avatar.svg';
+            }
+        });
+        
+        // Preload the image if not already loaded
+        if (img.src && !imagePreloader.isPreloaded(img.src)) {
+            imagePreloader.preloadImage(img.src);
+        }
+    });
+}
+
+// ============================================================================
+// Performance Monitoring
+// ============================================================================
+
+function monitorImagePerformance() {
+    // Monitor image loading performance
+    if ('PerformanceObserver' in window) {
+        const observer = new PerformanceObserver((list) => {
+            list.getEntries().forEach((entry) => {
+                if (entry.initiatorType === 'img') {
+                    console.log(`Image loaded: ${entry.name} (${entry.duration.toFixed(2)}ms)`);
+                }
+            });
+        });
+        
+        observer.observe({ entryTypes: ['resource'] });
+    }
+    
+    // Log preloading statistics
+    setTimeout(() => {
+        console.log(`Images preloaded: ${imagePreloader.preloadedImages.size}`);
+        console.log(`Images loading: ${imagePreloader.loadingPromises.size}`);
+    }, 2000);
+}
+
+// ============================================================================
+// Initialize Enhanced Image Loading
+// ============================================================================
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        enhanceTeamPhotos();
+        monitorImagePerformance();
+    });
+} else {
+    enhanceTeamPhotos();
+    monitorImagePerformance();
+}
+
+// Re-run when navigating to about page (for SPAs)
+if (window.location.pathname === '/about') {
+    setTimeout(enhanceTeamPhotos, 100);
+}
+
+// Export for global access
+window.imagePreloader = imagePreloader;
+
+console.log('Image preloading system initialized');

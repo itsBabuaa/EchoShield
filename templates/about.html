@@ -13,7 +13,8 @@
             <div class="team-photo">
                 <img src="{{ url_for('static', filename='images/' + member.photo) }}" 
                      alt="{{ member.name }}" 
-                     onerror="this.src='/static/images/default-avatar.svg'">
+                     loading="eager"
+                     onerror="this.src='{{ url_for('static', filename='images/default-avatar.svg') }}'">
             </div>
             <div class="team-info">
                 <h3 class="team-name">{{ member.name }}</h3>

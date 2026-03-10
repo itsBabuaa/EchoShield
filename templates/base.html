@@ -11,7 +11,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Preload critical images -->
+    <link rel="preload" href="{{ url_for('static', filename='images/default-avatar.svg') }}" as="image" type="image/svg+xml">
+    <link rel="preload" href="{{ url_for('static', filename='images/Sonali-Mathur.jpg') }}" as="image" type="image/jpeg">
+    <link rel="preload" href="{{ url_for('static', filename='images/Atharv.jpeg') }}" as="image" type="image/jpeg">
+    <link rel="preload" href="{{ url_for('static', filename='images/Ayush.jpeg') }}" as="image" type="image/jpeg">
+    <link rel="preload" href="{{ url_for('static', filename='images/Ansh.jpeg') }}" as="image" type="image/jpeg">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -57,6 +65,65 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- Image Preloader Script -->
+    <script>
+    (function() {
+        // Preload images function
+        function preloadImages(imageUrls) {
+            imageUrls.forEach(function(url) {
+                const img = new Image();
+                img.src = url;
+                // Optional: Add to cache or handle load events
+                img.onload = function() {
+                    console.log('Preloaded:', url);
+                };
+                img.onerror = function() {
+                    console.warn('Failed to preload:', url);
+                };
+            });
+        }
+        
+        // Critical images to preload
+        const criticalImages = [
+            "{{ url_for('static', filename='images/default-avatar.svg') }}",
+            "{{ url_for('static', filename='images/Sonali-Mathur.jpg') }}",
+            "{{ url_for('static', filename='images/Atharv.jpeg') }}",
+            "{{ url_for('static', filename='images/Ayush.jpeg') }}",
+            "{{ url_for('static', filename='images/Ansh.jpeg') }}"
+        ];
+        
+        // Preload images when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                preloadImages(criticalImages);
+            });
+        } else {
+            preloadImages(criticalImages);
+        }
+        
+        // Lazy load images that come into viewport
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                            imageObserver.unobserve(img);
+                        }
+                    }
+                });
+            });
+            
+            // Observe all lazy images
+            document.querySelectorAll('img[data-src]').forEach(function(img) {
+                imageObserver.observe(img);
+            });
+        }
+    })();
+    </script>
     
     <!-- Mobile Navigation Script (runs on all pages) -->
     <script>
