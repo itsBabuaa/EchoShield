@@ -1,12 +1,12 @@
 # EchoShield
 
-A Flask-based web application that detects deepfake audio using a BiLSTM (Bidirectional Long Short-Term Memory) neural network model. The system allows users to upload audio files or record audio directly through the web interface and provides real-time predictions on whether the audio is authentic or synthetically generated.
+A Flask-based web application that detects deepfake audio using a BI-LSTM (Bidirectional Long Short-Term Memory) neural network model. The system allows users to upload audio files or record audio directly through the web interface and provides real-time predictions on whether the audio is authentic or synthetically generated.
 
 ## Features
 
 - **Audio Upload**: Support for WAV, MP3, and FLAC formats
 - **Live Recording**: Record audio directly in the browser
-- **BiLSTM Model**: Deep learning model for accurate detection
+- **BI-LSTM Model**: Deep learning model for accurate detection
 - **Visual Results**: Animated confidence gauge and color-coded results
 - **Transcription**: Automatic speech-to-text conversion
 - **AI Chatbot**: Interactive assistant powered by Groq API
@@ -124,7 +124,7 @@ A Flask-based web application that detects deepfake audio using a BiLSTM (Bidire
 
 ## Model Architecture
 
-The BiLSTM model consists of:
+The BI-LSTM model consists of:
 - 2 Bidirectional LSTM layers with batch normalization
 - Dropout layers for regularization
 - Dense layers with ReLU activation
@@ -192,9 +192,17 @@ All configuration is managed through environment variables in the `.env` file:
 
 - **Backend**: Flask, TensorFlow/Keras, Librosa
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **ML Model**: BiLSTM with MFCC features
+- **ML Model**: BI-LSTM with MFCC features
 - **Speech Recognition**: Deepgram API
 - **AI Chatbot**: Groq API
+
+## Authors
+
+- **Dr. Sonali Mathur** — Project Supervisor, Assistant Professor, Dept. of CSE, IMS Engineering College
+- **Atharv Singh** — Lead Developer
+- **Ayush Pratap Singh** — Back-End Developer
+- **Ansh Srivastava** — Front-End Developer
+- **Anushka Singh** — Data Analyst
 
 ## Acknowledgments
 
