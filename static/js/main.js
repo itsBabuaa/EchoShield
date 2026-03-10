@@ -577,12 +577,46 @@ async function sendMessage() {
     }
 }
 
+function formatChatMessage(text) {
+    // Escape HTML first
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // Convert markdown-style bold **text** to <strong>
+    let formatted = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // Convert bullet lines (•, -, *) into an unordered list
+    const lines = formatted.split('\n');
+    let html = '';
+    let inList = false;
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+        const bulletMatch = trimmed.match(/^[\u2022\-\*]\s+(.*)/);
+        if (bulletMatch) {
+            if (!inList) { html += '<ul class="chat-list">'; inList = true; }
+            html += `<li>${bulletMatch[1]}</li>`;
+        } else {
+            if (inList) { html += '</ul>'; inList = false; }
+            if (trimmed === '') {
+                html += '<br>';
+            } else {
+                html += `<p class="chat-para">${trimmed}</p>`;
+            }
+        }
+    }
+    if (inList) html += '</ul>';
+
+    return html;
+}
+
 function addChatMessage(text, role, isLoading = false) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message ${role}`;
     
     if (isLoading) {
         messageDiv.innerHTML = '<span class="loading"></span>';
+    } else if (role === 'assistant') {
+        messageDiv.innerHTML = formatChatMessage(text);
     } else {
         messageDiv.textContent = text;
     }
