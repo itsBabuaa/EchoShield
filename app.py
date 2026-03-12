@@ -31,14 +31,32 @@ app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
 # Ensure upload directory exists
 os.makedirs(config.UPLOAD_FOLDER, exist_ok=True)
 
-# Initialize backend components
+# Initialize critical components eagerly (needed for every prediction)
 audio_processor = AudioProcessor()
 prediction_engine = PredictionEngine()
-transcriber = Transcriber()
-forensic_generator = ForensicReportGenerator()
+
+# Lazy-loaded components (only initialized on first use)
+_transcriber = None
+_forensic_generator = None
 
 # Store chatbot instances per session
 chatbots = {}
+
+
+def get_transcriber():
+    """Lazy-load transcriber on first use."""
+    global _transcriber
+    if _transcriber is None:
+        _transcriber = Transcriber()
+    return _transcriber
+
+
+def get_forensic_generator():
+    """Lazy-load forensic report generator on first use."""
+    global _forensic_generator
+    if _forensic_generator is None:
+        _forensic_generator = ForensicReportGenerator()
+    return _forensic_generator
 
 
 def allowed_file(filename):
@@ -273,7 +291,7 @@ def predict():
             
             # Get transcription (with error handling)
             try:
-                transcript = transcriber.transcribe(filepath)
+                transcript = get_transcriber().transcribe(filepath)
             except Exception as trans_error:
                 print(f"Transcription error: {trans_error}")
                 transcript = "[Transcription unavailable]"
@@ -347,7 +365,7 @@ def transcribe_audio():
         try:
             # Get transcription (with error handling)
             try:
-                transcript = transcriber.transcribe(filepath)
+                transcript = get_transcriber().transcribe(filepath)
             except Exception as trans_error:
                 print(f"Transcription error: {trans_error}")
                 transcript = "[Transcription unavailable]"
@@ -470,7 +488,7 @@ def generate_report():
         file_hash = session.get('last_file_hash', None)
         
         # Generate forensic report
-        report = forensic_generator.generate_report(
+        report = get_forensic_generator().generate_report(
             prediction=prediction,
             transcript=transcript,
             audio_metrics=audio_metrics,
@@ -512,7 +530,7 @@ def download_report():
         report = session['last_report']
         
         # Generate PDF
-        pdf_buffer = forensic_generator.generate_pdf(report)
+        pdf_buffer = get_forensic_generator().generate_pdf(report)
         
         # Generate filename
         report_id = report['metadata']['report_id']
