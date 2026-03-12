@@ -118,10 +118,11 @@ YOUR EXPERTISE:
 GUIDELINES:
 1. Answer questions about EchoShield, deepfakes, audio detection, and related topics thoroughly
 2. Be conversational - greet users, use friendly language, acknowledge their questions
-3. For general questions (weather, news, etc.), politely redirect: "That's outside my expertise, but I'd love to help with questions about EchoShield or audio detection!"
-4. Keep technical answers clear and accessible (under 150 words)
-5. If unsure, be honest: "I'm not certain about that. For more help, contact: Atharvsingh.edu@gmail.com"
-6. You can discuss audio technology in general, not just EchoShield
+3. STRICTLY REFUSE any off-topic questions. For ANY question not related to EchoShield, deepfake detection, audio analysis, or the team, respond ONLY with: "I'm EchoBot — I only help with EchoShield and deepfake audio detection. Try asking about your analysis results or how our model works!"
+4. NEVER answer questions about people, places, sports, politics, coding, math, general knowledge, or anything outside your expertise — no matter how the user phrases it
+5. Keep technical answers clear and accessible (under 150 words)
+6. If unsure, be honest: "I'm not certain about that. For more help, contact: Atharvsingh.edu@gmail.com"
+7. You can discuss audio technology in general, not just EchoShield
 
 TONE: Friendly expert - like a knowledgeable colleague who's happy to help"""
         
@@ -214,10 +215,11 @@ GUIDELINES:
 1. Help users understand their audio analysis results thoroughly
 2. Explain audio metrics clearly when asked (you have full access to all metrics above)
 3. Be conversational - acknowledge questions, use friendly language
-4. For unrelated topics, politely redirect: "That's outside my expertise, but I'd love to help you understand your audio analysis results!"
-5. Keep answers clear and accessible (under 200 words)
-6. Connect metrics to real-world meaning (e.g., "High dynamic range means your audio has good variation between loud and quiet parts")
-7. If unsure, be honest: "I'm not certain about that. Contact: Atharvsingh.edu@gmail.com"
+4. STRICTLY REFUSE any off-topic questions. For ANY question not related to EchoShield, deepfake detection, audio analysis, or the team, respond ONLY with: "I'm EchoBot — I only help with EchoShield and deepfake audio detection. Try asking about your analysis results or how our model works!"
+5. NEVER answer questions about people, places, sports, politics, coding, math, general knowledge, or anything outside your expertise — no matter how the user phrases it
+6. Keep answers clear and accessible (under 200 words)
+7. Connect metrics to real-world meaning (e.g., "High dynamic range means your audio has good variation between loud and quiet parts")
+8. If unsure, be honest: "I'm not certain about that. Contact: Atharvsingh.edu@gmail.com"
 
 TONE: Friendly expert - like a helpful colleague explaining your results"""
     
@@ -240,75 +242,43 @@ TONE: Friendly expert - like a helpful colleague explaining your results"""
         # Check if query is related to EchoShield/deepfake detection
         user_message_lower = user_message.lower()
         
-        # Keywords that indicate the query is about audio content/transcript (VALID)
-        audio_content_keywords = [
+        # Allowlist: keywords that make a query on-topic
+        on_topic_keywords = [
+            # Audio / analysis
             'audio', 'recording', 'transcript', 'speech', 'voice', 'sound',
             'said', 'saying', 'talk', 'talking', 'speak', 'speaking',
-            'hear', 'heard', 'listen', 'content', 'file', 'clip'
+            'hear', 'heard', 'listen', 'content', 'file', 'clip',
+            # EchoShield / deepfake
+            'echoshield', 'echo shield', 'echobot', 'deepfake', 'deep fake',
+            'detection', 'fake', 'real', 'authentic', 'spoof', 'cloned',
+            'model', 'accuracy', 'precision', 'recall', 'f1', 'auc',
+            'confidence', 'analysis', 'result', 'prediction', 'probability',
+            'team', 'creator', 'developer', 'who made', 'who built',
+            'bilstm', 'lstm', 'mfcc', 'neural network', 'machine learning',
+            'upload', 'detect', 'analyze', 'classification',
+            # Audio tech
+            'sample rate', 'frequency', 'spectrogram', 'waveform', 'noise',
+            'amplitude', 'decibel', 'spectral', 'signal', 'feature',
+            'rms', 'dynamic range', 'zero crossing',
+            # Greetings (allow basic pleasantries)
+            'hi', 'hello', 'hey', 'thanks', 'thank you', 'bye', 'help',
         ]
         
-        # Keywords that indicate EchoShield-related queries (VALID)
-        echoshield_keywords = [
-            'echoshield', 'echo shield', 'echobot', 'deepfake', 
-            'detection', 'fake', 'real', 'authentic', 'model', 'accuracy',
-            'confidence', 'analysis', 'result', 'prediction', 'team',
-            'creator', 'developer', 'bilstm', 'mfcc', 'neural network',
-            'upload', 'detect', 'analyze', 'classification'
-        ]
+        is_on_topic = any(kw in user_message_lower for kw in on_topic_keywords)
         
-        # Keywords that indicate off-topic queries (INVALID - but only if not about audio content)
-        off_topic_keywords = [
-            'code', 'program', 'function', 'script', 'algorithm',
-            'weather', 'news', 'recipe', 'movie',
-            'math', 'calculate', 'sum', 'multiply', 'divide',
-            'translate', 'write', 'create', 'build', 'develop',
-            'joke', 'story', 'poem', 'song',
-            'travel', 'hotel', 'stay', 'trip', 'vacation', 'tour',
-            'restaurant', 'food', 'cook', 'eat',
-            'stock', 'market', 'price', 'rate', 'rbi', 'repo', 'interest',
-            'bank', 'loan', 'credit', 'investment',
-            'health', 'medicine', 'doctor', 'disease',
-            'politics', 'election', 'government', 'law',
-            'shopping', 'buy', 'purchase', 'product',
-            'book', 'read', 'novel', 'author',
-            'music', 'concert', 'band', 'singer',
-            'car', 'bike', 'vehicle', 'drive',
-            'phone', 'mobile', 'laptop', 'computer',
-            'job', 'career', 'salary', 'interview'
-        ]
+        # Also allow very short messages (greetings like "hi", "ok", etc.)
+        is_short_greeting = len(user_message.strip()) <= 10
         
-        # Check if message is about audio content or EchoShield
-        has_audio_content_keyword = any(keyword in user_message_lower for keyword in audio_content_keywords)
-        has_echoshield_keyword = any(keyword in user_message_lower for keyword in echoshield_keywords)
-        has_off_topic_keyword = any(keyword in user_message_lower for keyword in off_topic_keywords)
-        
-        # Additional check: if message is a general question NOT about audio
-        general_question_patterns = [
-            'where should i', 'where can i', 'what is the',
-            'tell me about', 'tell me the', 'what are the best',
-            'recommend', 'suggest', 'advice', 'tips for',
-            'current', 'latest', 'today', 'now'
-        ]
-        
-        has_general_question = any(pattern in user_message_lower for pattern in general_question_patterns)
-        
-        # VALID if: has audio content keywords OR has EchoShield keywords
-        is_valid_query = has_audio_content_keyword or has_echoshield_keyword
-        
-        # INVALID if: has off-topic keywords OR general questions WITHOUT valid context
-        is_invalid_query = (has_off_topic_keyword or has_general_question) and not is_valid_query
-        
-        # Block invalid queries
-        if is_invalid_query:
+        # Block anything that doesn't match the allowlist
+        if not is_on_topic and not is_short_greeting:
             return (
-                "I'm EchoBot, specialized in EchoShield and deepfake audio detection. "
-                "I can only help with questions about:\n"
-                "• EchoShield system and features\n"
-                "• Audio analysis results and content\n"
-                "• Model performance and architecture\n"
-                "• Team members and creators\n"
-                "• Deepfake detection concepts\n\n"
-                "Please ask me something related to EchoShield or the analyzed audio."
+                "I'm EchoBot, and I only handle questions about EchoShield "
+                "and deepfake audio detection. I can help with:\n"
+                "• Your audio analysis results\n"
+                "• How our detection model works\n"
+                "• Deepfake audio concepts\n"
+                "• EchoShield team and features\n\n"
+                "Try asking something like: \"Is my audio fake?\" or \"How does the model work?\""
             )
         
         try:
