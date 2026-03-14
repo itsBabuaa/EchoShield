@@ -199,7 +199,7 @@ def about():
             'name': 'Ayush Pratap Singh',
             'role': 'Back-End Developer',
             'contribution': 'Developed the Flask backend architecture, API endpoints, and integrated audio processing pipeline with the prediction engine',
-            'email': 'ayushrajawat2005@gmail.com',
+            'email': 'ayushrajawat5@gmail.com',
             'github': 'AyushPratap05',
             'photo': 'Ayush.jpeg'
         },
@@ -207,7 +207,7 @@ def about():
             'name': 'Ansh Srivastava',
             'role': 'Front-End Developer',
             'contribution': 'Designed and built the complete user interface with responsive layouts, interactive components, and modern styling',
-            'email': 'srivastavaansh1408@gmail.com',
+            'email': 'anshs6678@gmail.com',
             'github': 'Ansh-1401',
             'photo': 'Ansh.jpeg'
         },
@@ -216,8 +216,8 @@ def about():
             'role': 'Data Analyst',
             'contribution': 'Analyzed the SceneFake dataset, performed data preprocessing, and assisted in model training and validation processes',
             'email': 'singhanu8404@gmail.com',
-            'github': None,
-            'photo': 'team5.jpg'
+            'github': 'AnushkaSingh',
+            'photo': 'anushka.jpeg'
         }
     ]
     return render_template('about.html', team_members=team_members)
