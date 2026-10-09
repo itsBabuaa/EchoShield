@@ -195,10 +195,10 @@ def about():
             'github': 'itsBabuaa',
             'photo': 'Atharv.jpeg'
         },
-        {
+         {
             'name': 'Ayush Pratap Singh',
-            'role': 'Back-End Developer',
-            'contribution': 'Developed the Flask backend architecture, API endpoints, and integrated audio processing pipeline with the prediction engine',
+            'role': 'Product Manager & Tester',
+            'contribution': 'Defined product requirements and feature scope for EchoShield, coordinated the team, and tested the application end to end, including audio upload, prediction, transcription, chatbot, and forensic report flows, to find and report bugs before release',
             'email': 'ayushrajawat5@gmail.com',
             'github': 'AyushPratap05',
             'photo': 'Ayush.jpeg'
